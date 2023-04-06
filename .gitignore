@@ -1,0 +1,31 @@
+# Ignore the Settings Configuration File
+myprojectmanager/settings.py
+
+# Ignore .DS_Store files (Mac)
+.DS_Store
+
+# Ignore Virtual Environment 
+venv/
+
+# Ignore Python Cache Directories 
+myprojectmanager/__pycache__/
+myprojectmanager/**/__pycache__/
+
+# Ignore the Initialization Files 
+myprojectmanager/__init__.py
+__init__.py
+
+# Ignore the Migrations Directories
+migrations/
+
+# Ignore the Common Utilities Directory
+common/util/
+
+# Ignore Static Admin Files 
+static/admin/
+
+gis/
+vendor/select2/
+i18n/
+xregexp/
+lib/
