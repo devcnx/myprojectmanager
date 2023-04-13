@@ -83,5 +83,5 @@ class LaborHours(models.Model):
         # Find the number of days left until the end of the week (Sunday)
         days_to_end_of_week = 6 - week_day 
         # Add the number of days to the labor date to get the week ending date 
-        self.week_ending = self.labor_date + timedelta(dayys=days_to_end_of_week)
+        self.week_ending = self.labor_date + timedelta(days=days_to_end_of_week)
         super().save(*args, **kwargs)
