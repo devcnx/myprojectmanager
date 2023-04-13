@@ -38,6 +38,7 @@ class TravelHours(models.Model):
     week_ending = models.DateField(
         verbose_name='Week Ending',
         db_column='week_ending',
+        blank=True,
     )
     travel_resource = models.ForeignKey(
         Resource,

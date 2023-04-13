@@ -41,6 +41,7 @@ class LaborHours(models.Model):
     week_ending = models.DateField(
         verbose_name='Week Ending',
         db_column='week_ending',
+        blank=True,
     )
 
     labor_resource = models.ForeignKey(
