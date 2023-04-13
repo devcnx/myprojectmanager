@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> MyProjectManager {% block subtitle %} {% endblock %} </title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/css/__base.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
+            rel="stylesheet">
+        {% block styles %}
+        {% endblock %}
+        {% block scripts %}
+        {% endblock %}
+    </head>
+
+    <body>
+        <div class="main">
+            <div class="welcome_container">
+                <div class="welcome_name">
+                    <p>
+                        Hello, {{ user.first_name }}!
+                    </p>
+                </div>
+                <div class="current_date_container">
+                    <p>
+                        {% now "l" %}, {% now "F" %} {% now "j" %}, {% now "Y" %}
+                        {% now "g" %}:{% now "i" %}{% now "A" %} {% now "T" %}
+                    </p>
+                </div>
+            </div>
+            {% block header %}
+            <div class="header">
+                <h1>MyProjectManager</h1>
+                <div class="header_links">
+                    {% if request.path != '/' %}
+                    <a href="{%url 'main:index' %}">Home</a>
+                    {% endif %}
+                    <a href="">Contact IT</a>
+                    <a href="">Help Center</a>
+                    <a href="{% url 'admin:logout' %}">Logout</a>
+                </div>
+            </div>
+            {% endblock %}
+
+            {% block subnav %}
+            <div class="sub_nav">
+                <button class="sub_nav_button">
+                    <a href="">Dashboard</a>
+                </button>
+                <button class="sub_nav_button">
+                    Jobs
+                    <ul>
+                        <li>
+                            <a href="">Create Job</a>
+                        </li>
+                    </ul>
+                </button>
+                <button class="sub_nav_button">
+                    Opportunities
+                    <ul>
+                        <li>
+                            <a href="">All Opportunities</a>
+                        </li>
+                        <li>
+                            <a href="">Create Opportunity</a>
+                        </li>
+                        <li>
+                            <a href="">Bid Sheet</a>
+                        </li>
+                        <li>
+                            <a href="">Proposal Template</a>
+                        </li>
+                    </ul>
+                </button>
+
+                <button class="sub_nav_button">
+                    Financials
+                    <li>
+                        <a href="">Expense Report</a>
+                    </li>
+                </button>
+                <button class="sub_nav_button">
+                    Reports
+                </button>
+                <button class="sub_nav_button">
+                    Resources
+                    <li>
+                        <a href="">Calendar</a>
+                    </li>
+                    <li>
+                        <a href="">Time Sheet</a>
+                    </li>
+                </button>
+            </div>
+
+            {% endblock %}
+
+            <div class="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+
+            <div class="footer">
+                {% block footer %}
+                <p>
+                    &copy; {% now "Y" %} MyProjectManager by Brittaney
+                </p>
+                {% endblock %}
+            </div>
+
+        </div>
+    </body>
+</html>
