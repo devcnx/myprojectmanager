@@ -3,9 +3,9 @@ from .models import Equipment
 
 
 class EquipmentAdmin(admin.ModelAdmin):
-    list_display = ('equipment_id', 'description')
+    list_display = ('description',)
+    list_display_links = ('description',)
     search_fields = ('description',)
-    list_filter = ('description',)
     ordering = ('equipment_id',)
     list_per_page = 25
 
