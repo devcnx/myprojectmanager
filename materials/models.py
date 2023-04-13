@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User 
 from django.db import models
 from vendors.models import Vendor 
 
@@ -41,6 +40,7 @@ class MaterialVendor(models.Model):
         primary_key=True,
         editable=False,
         verbose_name='ID',
+        auto_created=True,
         db_column='id',
     )
     material = models.ForeignKey(
@@ -94,23 +94,19 @@ class MaterialVendor(models.Model):
         auto_now=True,
         verbose_name='Last Modified',
         db_column='last_modified',
-    )
-    last_modified_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Last Modified By',
-        db_column='last_modified_by',
+        blank=True,
+        null=True,
     )
 
     class Meta:
         db_table = 'material_vendors'
         verbose_name = 'Material Vendor'
         verbose_name_plural = 'Material Vendors'
-        ordering = ['material', 'vendor']
-        unique_together = ['material', 'vendor']
+        ordering = ['vendor', 'material']
+        unique_together = ('material', 'vendor')
 
     def __str__(self):
-        return f'{self.material} | {self.vendor}'
+        return f'{self.vendor} | {self.material}'
 
     def save(self, *args, **kwargs):
         self.vendor_description = self.vendor_description.lower()
