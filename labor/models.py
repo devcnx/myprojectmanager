@@ -64,6 +64,8 @@ class LaborHours(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Labor Notes',
         db_column='labor_notes',
+        blank=True,
+        null=True,
     )
 
     class Meta:
