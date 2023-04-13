@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import ResourceStatus 
 
-# Register your models here.
+
+admin.site.register(ResourceStatus)
