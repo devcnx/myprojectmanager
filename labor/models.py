@@ -15,7 +15,7 @@ class LaborHours(models.Model):
     )
     labor_id = models.AutoField(
         primary_key=True,
-        editbable=False,
+        editable=False,
         verbose_name='Labor ID',
         db_column='labor_id',
     )
@@ -31,10 +31,12 @@ class LaborHours(models.Model):
         decimal_places=2,
         verbose_name='Labor Hours',
         db_column='labor_hours',
+        default=0.00,
     )
     labor_date = models.DateField(
         verbose_name='Labor Date',
         db_column='labor_date',
+        blank=True,
     )
     week_ending = models.DateField(
         verbose_name='Week Ending',
