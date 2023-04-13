@@ -64,6 +64,12 @@ class TravelHours(models.Model):
         null=True,
     )
 
+    class Meta:
+        db_table='travel'
+        verbose_name='Travel'
+        verbose_name_plural='Travel'
+        ordering = ['-travel_created']
+
     def __str__(self):
         return f'{self.travel_type} {self.travel_hours} {self.travel_date} {self.travel_resource} {self.travel_created}{self.travel_updated}'
 
