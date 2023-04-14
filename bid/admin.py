@@ -14,6 +14,7 @@ class BidAdmin(admin.ModelAdmin):
             'fields': ('bid_type', 'bid_status', 'bid_project')
         }),
     )
+    readonly_fields = ('bid_project',)
 
     def save_model(self, request, obj, form, change):
         if not change:

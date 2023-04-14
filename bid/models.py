@@ -1,7 +1,7 @@
 from customers.models import CustomerContact
 from django.contrib.auth.models import User 
 from django.db import models
-from django.db.models.signals import m2m_changed
+from django.db.models.signals import post_save
 from projects.models import Project 
 
 
@@ -87,14 +87,24 @@ class Bid(models.Model):
             self.last_updated_by = user 
         super(Bid, self).save(*args, **kwargs)
 
-
-def create_bid(sender, instance, **kwargs):
-    if 'post_add' and instance.project_status == 'Bidding' and not Bid.objects.filter(bid_project=instance).exists():
+def create_bid(sender, instance, created, **kwargs):
+    if created and instance.is_new_project:
         bid = Bid()
+        if Bid.objects.filter(bid_project=instance).exists():
+            # Check if there's a bid with 'Initial' bid_type
+            if bid.filter(bid_project=instance, bid_type='Initial').exists():
+                bid_type = 'Revision'
+            else:
+                bid_type = 'Initial'
+        else:
+            bid_type = 'Initial'
+        bid.bid_type = bid_type
         bid.bid_project = instance
         bid.created_by = instance.created_by
         bid.last_updated_by = instance.created_by
         bid.save()
+        # Update the instance to set is_new_project to False
+        instance.is_new_project = False
+        instance.save()
 
-
-m2m_changed.connect(create_bid, sender=Project.project_contacts.through)
+post_save.connect(create_bid, sender=Project)

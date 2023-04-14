@@ -1,7 +1,10 @@
 from customers.models import CustomerContact
 from datetime import date
+from django.apps import apps
 from django.contrib.auth.models import User 
 from django.db import models
+from django.db.models.signals import m2m_changed
+from notes.models import Note
 from sites.models import Site 
 
 
@@ -82,6 +85,12 @@ class Project(models.Model):
         verbose_name='Last Updated By',
         db_column='last_updated_by',
         related_name='project_last_updated_by'
+    )
+    project_notes = models.ManyToManyField(
+        Note,
+        verbose_name='Project Notes',
+        db_column='project_notes',
+        blank=True,
     )
     is_new_project = models.BooleanField(
         default=True,
