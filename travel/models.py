@@ -111,6 +111,7 @@ class TravelExpense(models.Model):
         decimal_places=2,
         verbose_name='Expense Amount',
         db_column='expense_amount',
+        default=0.00,
     )
     expense_date = models.DateField(
         verbose_name='Expense Date',
