@@ -5,7 +5,6 @@ from django.db.models.signals import m2m_changed
 from projects.models import Project 
 
 
-
 class Bid(models.Model):
     BID_TYPE_CHOICES = (
         ('Initial', 'Initial'),
