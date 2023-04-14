@@ -12,9 +12,11 @@ class Bid(models.Model):
     )
     BID_STATUS_CHOICES = (
         ('Draft', 'Draft'),
-        ('Submitted', 'Submitted'),
-        ('Approved', 'Approved'),
-        ('Rejected', 'Rejected'),
+        ('Approved (Internally)', 'Approved (Internally)'),
+        ('Submitted to Customer', 'Submitted to Customer'),
+        ('Awarded', 'Awarded'),
+        ('Lost', 'Lost'),
+        ('No Bid', 'No Bid'),
     )
     bid_id = models.AutoField(
         primary_key=True,
