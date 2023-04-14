@@ -1,3 +1,4 @@
+from customers.models import CustomerContact
 from datetime import date
 from django.contrib.auth.models import User 
 from django.db import models
@@ -6,6 +7,7 @@ from sites.models import Site
 
 class Project(models.Model):
     PROJECT_STATUS_CHOICES = (
+        ('Bidding', 'Bidding'),
         ('Planning', 'Planning'),
         ('Active', 'Active'),
         ('On Hold', 'On Hold'),
@@ -35,7 +37,12 @@ class Project(models.Model):
         choices=PROJECT_STATUS_CHOICES,
         verbose_name='Project Status',
         db_column='project_status',
-        default='Planning',
+        default='Bidding',
+    )
+    project_contacts = models.ManyToManyField(
+        CustomerContact,
+        verbose_name='Project Contacts',
+        db_column='project_contacts',
     )
     project_start = models.DateField(
         verbose_name='Project Start',
@@ -89,7 +96,7 @@ class Project(models.Model):
         ordering=['-project_start']
 
     def __str__(self):
-        return f'{self.project_number}{self.project_name}'
+        return f'({self.project_number}) {self.project_name}'
 
     def save(self, user=None, *args, **kwargs):
         if user and not self.created_by:
@@ -97,8 +104,5 @@ class Project(models.Model):
         if user:
             self.last_updated_by = user 
         super(Project, self).save(*args, **kwargs)
-
-
-
-
+        return user
     

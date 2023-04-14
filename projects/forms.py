@@ -11,3 +11,4 @@ class ProjectForm(forms.ModelForm):
             'project_end': forms.DateInput(attrs={'type': 'date'}),
         }
         
+        

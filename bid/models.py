@@ -1,5 +1,8 @@
+from customers.models import CustomerContact
 from django.contrib.auth.models import User 
 from django.db import models
+from django.db.models.signals import m2m_changed
+from projects.models import Project 
 
 
 
@@ -9,6 +12,7 @@ class Bid(models.Model):
         ('Revision', 'Revision'),
         ('Change Order', 'Change Order'),
         ('Time & Material', 'Time & Material'),
+        ('Warranty', 'Warranty'),
     )
     BID_STATUS_CHOICES = (
         ('Draft', 'Draft'),
@@ -38,23 +42,29 @@ class Bid(models.Model):
         db_column='bid_status',
         default='Draft',
     )
-    bid_created_on = models.DateTimeField(
+    bid_project = models.ForeignKey(
+        Project,
+        on_delete=models.CASCADE,
+        verbose_name='Bid Project',
+        db_column='bid_project',
+    )
+    created_on = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Bid Created On',
         db_column='bid_created_on',
     )
-    bid_created_by = models.ForeignKey(
+    created_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Bid Created By',
         db_column='bid_created_by',
     )
-    bid_updated_on = models.DateTimeField(
+    last_updated_on = models.DateTimeField(
         auto_now=True,
         verbose_name='Bid Updated On',
         db_column='bid_updated_on',
     )
-    bid_updated_by = models.ForeignKey(
+    last_updated_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,   
         verbose_name='Bid Updated By',
@@ -66,11 +76,26 @@ class Bid(models.Model):
         db_table = 'bid'
         verbose_name = 'Bid'
         verbose_name_plural = 'Bids'
-        ordering = ['-bid_created_on']
+        ordering = ['-created_on']
 
     def __str__(self):
         return str(self.bid_id)
 
+    def save(self, user=None, *args, **kwargs):
+        if user and not self.created_by:
+            self.created_by = user 
+        if user:
+            self.last_updated_by = user 
+        super(Bid, self).save(*args, **kwargs)
 
 
+def create_bid(sender, instance, **kwargs):
+    if 'post_add' and instance.project_status == 'Bidding' and not Bid.objects.filter(bid_project=instance).exists():
+        bid = Bid()
+        bid.bid_project = instance
+        bid.created_by = instance.created_by
+        bid.last_updated_by = instance.created_by
+        bid.save()
 
+
+m2m_changed.connect(create_bid, sender=Project.project_contacts.through)
