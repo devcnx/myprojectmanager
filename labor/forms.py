@@ -6,7 +6,7 @@ class LaborHoursForm(forms.ModelForm):
     class Meta:
         model = LaborHours 
         fields = '__all__'
-        readonly_fields = ('')
+        readonly_fields = ('week_ending')
 
     def __init__(self, *args, **kwargs):
         super(LaborHoursForm, self).__init__(*args, **kwargs)

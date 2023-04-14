@@ -33,7 +33,6 @@ class TravelHours(models.Model):
     travel_date = models.DateField(
         verbose_name='Travel Date',
         db_column='travel_date',
-        blank=True,
     )
     week_ending = models.DateField(
         verbose_name='Week Ending',
@@ -72,7 +71,9 @@ class TravelHours(models.Model):
         ordering = ['-travel_created']
 
     def __str__(self):
-        return f'{self.travel_type} {self.travel_hours} {self.travel_date} {self.travel_resource} {self.travel_created}{self.travel_updated}'
+        return f'W/E {self.week_ending} | {self.travel_resource} {self.travel_date} {self.travel_hours} {self.travel_type}'
+
+
 
     def save(self, *args, **kwargs):
         # Determine the week day based on the labor date

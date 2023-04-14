@@ -36,7 +36,6 @@ class LaborHours(models.Model):
     labor_date = models.DateField(
         verbose_name='Labor Date',
         db_column='labor_date',
-        blank=True,
     )
     week_ending = models.DateField(
         verbose_name='Week Ending',
@@ -76,7 +75,7 @@ class LaborHours(models.Model):
         ordering = ['-labor_created']
 
     def __str__(self):
-        return f'{self.labor_type} {self.labor_hours} {self.labor_date} {self.labor_resource} {self.labor_created} {self.labor_updated}'
+        return f'W/E {self.week_ending} | {self.labor_resource} {self.labor_date} {self.labor_hours} {self.labor_type}'
 
     def save(self, *args, **kwargs):
         # Determine the week day based on the labor date
