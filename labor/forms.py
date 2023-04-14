@@ -6,7 +6,6 @@ class LaborHoursForm(forms.ModelForm):
     class Meta:
         model = LaborHours 
         fields = '__all__'
-        readonly_fields = ('week_ending')
 
     def __init__(self, *args, **kwargs):
         super(LaborHoursForm, self).__init__(*args, **kwargs)
@@ -17,3 +16,13 @@ class LaborHoursForm(forms.ModelForm):
                 'max': '24',
             }
         )
+        self.fields['labor_hours_quantity'].widget.attrs.update(
+            {
+                'step': '0.25',
+                'min': '0',
+                'max': '24',
+            }
+        )
+
+
+

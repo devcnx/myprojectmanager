@@ -2,7 +2,11 @@ from customers.models import CustomerContact
 from django.contrib.auth.models import User 
 from django.db import models
 from django.db.models.signals import post_save
+from equipment.models import Equipment
+from labor.models import LaborHours
+from materials.models import Material
 from projects.models import Project 
+from travel.models import TravelHours, TravelExpense
 
 
 class Bid(models.Model):
@@ -46,6 +50,36 @@ class Bid(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Bid Project',
         db_column='bid_project',
+    )
+    bid_labor_hours = models.ManyToManyField(
+        LaborHours,
+        verbose_name='Bid Labor Hours',
+        db_column='bid_labor_hours',
+        default=0.0,
+    )
+    bid_travel_hours = models.ManyToManyField(
+        TravelHours,
+        verbose_name='Bid Travel Hours',
+        db_column='bid_travel_hours',
+        default=0.0,
+    )
+    bid_travel_expenses = models.ManyToManyField(
+        TravelExpense,
+        verbose_name='Bid Travel Expenses',
+        db_column='bid_travel_expenses',
+        default=0.0,
+    )
+    bid_materials = models.ManyToManyField(
+        Material,
+        verbose_name='Bid Materials',
+        db_column='bid_materials',
+        blank=True,
+    )
+    bid_equipment = models.ManyToManyField(
+        Equipment,
+        verbose_name='Bid Equipment',
+        db_column='bid_equipment',
+        blank=True,
     )
     created_on = models.DateTimeField(
         auto_now_add=True,

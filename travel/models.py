@@ -1,6 +1,7 @@
 from datetime import timedelta
 from django.db import models
 from notes.models import Note
+from rates.models import Rate
 from resources.models import Resource
 
 
@@ -23,6 +24,20 @@ class TravelHours(models.Model):
         db_column='travel_type',
         default='Site to Site',
     )
+    travel_rate = models.ForeignKey(
+        Rate,
+        on_delete=models.CASCADE,
+        verbose_name='Travel Rate',
+        db_column='travel_rate',
+        default=3,
+    )
+    travel_hours_quantity = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name='Travel Quantity',
+        db_column='travel_quantity',
+        default=0.00,
+    )
     travel_hours = models.DecimalField(
         max_digits=5,
         decimal_places=2,
@@ -30,59 +45,25 @@ class TravelHours(models.Model):
         db_column='travel_hours',
         default=0.00,
     )
-    travel_date = models.DateField(
-        verbose_name='Travel Date',
-        db_column='travel_date',
-    )
-    week_ending = models.DateField(
-        verbose_name='Week Ending',
-        db_column='week_ending',
-        blank=True,
-    )
-    travel_resource = models.ForeignKey(
-        Resource,
-        on_delete=models.CASCADE,
-        verbose_name='Travel Resource',
-        db_column='travel_resource',
-    )
-    travel_created = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Travel Created',
-        db_column='travel_created',
-    )
-    travel_updated = models.DateTimeField(
-        auto_now=True,
-        verbose_name='Travel Updated',
-        db_column='travel_updated',
-    )
-    travel_note = models.ForeignKey(
-        Note,
-        on_delete=models.CASCADE,
-        verbose_name='Travel Note',
-        db_column='travel_note',
-        blank=True,
-        null=True,
-    )
 
     class Meta:
         db_table='travel'
         verbose_name='Travel'
         verbose_name_plural='Travel'
-        ordering = ['-travel_created']
+        ordering = ['-travel_id']
 
     def __str__(self):
-        return f'W/E {self.week_ending} | {self.travel_resource} {self.travel_date} {self.travel_hours} {self.travel_type}'
+        return f'{self.travel_type} - {self.travel_hours} Hours'
 
 
-
-    def save(self, *args, **kwargs):
-        # Determine the week day based on the labor date
-        week_day = self.travel_date.weekday() # 0 = Monday, 6 = Sunday
-        # Find the number of days left until the end of the week (Sunday)
-        days_to_end_of_week = 6 - week_day 
-        # Add the number of days to the labor date to get the week ending date 
-        self.week_ending = self.labor_date + timedelta(days=days_to_end_of_week)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Determine the week day based on the labor date
+    #     week_day = self.travel_date.weekday() # 0 = Monday, 6 = Sunday
+    #     # Find the number of days left until the end of the week (Sunday)
+    #     days_to_end_of_week = 6 - week_day 
+    #     # Add the number of days to the labor date to get the week ending date 
+    #     self.week_ending = self.labor_date + timedelta(days=days_to_end_of_week)
+    #     super().save(*args, **kwargs)
 
 
 class TravelExpense(models.Model):
@@ -113,54 +94,54 @@ class TravelExpense(models.Model):
         db_column='expense_amount',
         default=0.00,
     )
-    expense_date = models.DateField(
-        verbose_name='Expense Date',
-        db_column='expense_date',
-    )
-    week_ending = models.DateField(
-        verbose_name='Week Ending',
-        db_column='week_ending',
-        blank=True,
-    )
-    expense_for = models.ForeignKey(
-        Resource,
-        on_delete=models.CASCADE,
-        verbose_name='Expense For',
-    )
-    expense_created = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Expense Created',
-        db_column='expense_created',
-    )
-    expense_updated = models.DateTimeField(
-        auto_now=True,
-        verbose_name='Expense Updated',
-        db_column='expense_updated',
-    )
-    expense_note = models.ForeignKey(
-        Note,
-        on_delete=models.CASCADE,
-        verbose_name='Expense Note',
-        db_column='expense_note',
-        blank=True,
-        null=True,
-    )
+    # expense_date = models.DateField(
+    #     verbose_name='Expense Date',
+    #     db_column='expense_date',
+    # )
+    # week_ending = models.DateField(
+    #     verbose_name='Week Ending',
+    #     db_column='week_ending',
+    #     blank=True,
+    # )
+    # expense_for = models.ForeignKey(
+    #     Resource,
+    #     on_delete=models.CASCADE,
+    #     verbose_name='Expense For',
+    # )
+    # expense_created = models.DateTimeField(
+    #     auto_now_add=True,
+    #     verbose_name='Expense Created',
+    #     db_column='expense_created',
+    # )
+    # expense_updated = models.DateTimeField(
+    #     auto_now=True,
+    #     verbose_name='Expense Updated',
+    #     db_column='expense_updated',
+    # )
+    # expense_note = models.ForeignKey(
+    #     Note,
+    #     on_delete=models.CASCADE,
+    #     verbose_name='Expense Note',
+    #     db_column='expense_note',
+    #     blank=True,
+    #     null=True,
+    # )
 
     class Meta:
         db_table='travel_expense'
         verbose_name='Travel Expense'
         verbose_name_plural='Travel Expenses'
-        ordering = ['-expense_created']
+        ordering = ['-travel_expense_id']
 
     def __str__(self):
-        return f'W/E {self.week_ending} | {self.expense_for} {self.expense_date} {self.expense_amount} {self.expense_type}'
+        return f'{self.expense_type} - {self.expense_amount}'
 
-    def save(self, *args, **kwargs):
-        # Determine the week day based on the labor date
-        week_day = self.expense_date.weekday()
-        # Find the number of days left until the end of the week (Sunday)
-        days_to_end_of_week = 6 - week_day
-        # Add the number of days to the labor date to get the week ending date
-        self.week_ending = self.expense_date + timedelta(days=days_to_end_of_week)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     # Determine the week day based on the labor date
+    #     week_day = self.expense_date.weekday()
+    #     # Find the number of days left until the end of the week (Sunday)
+    #     days_to_end_of_week = 6 - week_day
+    #     # Add the number of days to the labor date to get the week ending date
+    #     self.week_ending = self.expense_date + timedelta(days=days_to_end_of_week)
+    #     super().save(*args, **kwargs)
 
