@@ -1,5 +1,6 @@
 @charset "utf-8";
 
+/* Reset Styles */
 * {
     margin: 0;
     padding: 0;
@@ -9,4 +10,183 @@
 html {
     font-family: 'Roboto Condensed', sans-serif;
     font-size: 14px;
+}
+
+html,
+body,
+.main {
+    height: 100%;
+}
+
+/* Base Styles */
+.content {
+    width: 100%;
+    height: 100%;
+}
+
+.welcome_container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.welcome_container p {
+    text-transform: uppercase;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.header h1 {
+    font-size: 40px;
+    text-shadow: 1px 1px 10px #a5a5a5;
+    border-bottom: 1px solid lightgray;
+}
+
+.header_links {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.header_links a {
+    text-decoration: none;
+    color: black;
+    margin: 0 10px;
+    width: 120px;
+    text-align: center;
+    font-size: 12px;
+}
+
+.header_links a:hover {
+    color: #a5a5a5;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+
+.sub_nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.sub_nav_button {
+    background-color: #f5f5f5;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.sub_nav_button a {
+    text-decoration: none;
+    text-transform: uppercase;
+    color: black;
+}
+
+.sub_nav_button ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f5f5f5;
+    min-width: 100%;
+    z-index: 1;
+    list-style: none;
+    padding-left: 0;
+}
+
+.sub_nav_button:hover {
+    background-color: #d2d2d2;
+}
+
+.sub_nav_button:hover>a {
+    color: #7e7e7e;
+    font-weight: 700;
+    text-shadow: 1px 1px 10px #a5a5a5;
+}
+
+.sub_nav_button:hover p {
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 1px 1px 10px #a5a5a5;
+}
+
+.sub_nav_button:hover ul {
+    display: block;
+}
+
+.sub_nav_button ul li {
+    padding: 10px 20px;
+}
+
+.sub_nav_button ul li:hover {
+    background-color: #d2d2d2;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.sub_nav_button ul li:hover a {
+    color: #fff;
+    text-shadow: 1px 1px 10px #a5a5a5;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 20px;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer p {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Dashboard Styles */
+.overview_container {
+    /* border: 1px solid #ddd; */
+    width: 100%;
+}
+
+.project_count_container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    font-weight: 100;
+}
+
+.project_work_orders_container {
+    clear: both;
 }

@@ -1,9 +1,49 @@
-{% extends 'main/__base.html' %}
-{% block subtitle %}{% endblock %}
-{% load static %}
-{% block styles %}
-{% endblock %}
-{% block scripts %}
-{% endblock %}
-{% block content %}
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MyProjectManager</title>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/css/index.css' %}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
+            rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="landing_page_container">
+            <div class="top">
+                <p>
+                    United Power and Control Systems (UPCS)
+                </p>
+                <p>
+                    Strategic Infrastructure Technologies (STINTE)
+                </p>
+            </div>
+
+            <div class="middle">
+                <h1>
+                    MyProjectManager
+                </h1>
+                <p>
+                    Quick Links
+                </p>
+                <div class="quick_link_container">
+                    <a href="{% url 'main:dashboard' %}">View the Dashboard</a>
+                    <a href="">View Projects</a>
+                    <a href="">View Something</a>
+                    <a href="">View Something</a>
+                </div>
+            </div>
+            <div class="bottom">
+                <p>
+                    {% now "l" %}, {% now "F" %} {% now "j" %}, {% now "Y" %} at
+                    {% now "g" %}:{% now "i" %}{% now "A" %} {% now "T" %}
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

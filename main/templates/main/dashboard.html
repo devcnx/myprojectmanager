@@ -1,0 +1,48 @@
+{% extends 'main/__base.html' %}
+{% block subtitle %} | Dashboard {% endblock %}
+{% load static %}
+{% block styles %}
+{% endblock %}
+{% block scripts %}
+{% endblock %}
+{% block content %}
+
+<div class="overview_container">
+    <div class="overview">
+        <div class="overview_item">
+            <div class="overview_item_title">Open Work Orders</div>
+            {% if open_work_orders %}
+            {% for work_order in open_work_orders %}
+            <div class="overview_item_value">
+                <p>
+                    {{ work_order.work_order_number }}
+                </p>
+                <p>
+                    {{ work_order.work_order_project.project_number}} {{ work_order.work_order_project.project_name }}
+                </p>
+                <p>
+                    {{ work_order.work_order_site }}
+                </p>
+                {% if work_order_trips_count == 0 %}
+                <a href="">Add Trip </a>
+                {% endif %}
+                {% if work_order_trips_count > 0 %}
+                <p>
+                    {{ work_order_trips_count }} Trip(s)
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="overview_item_value">
+                <p>
+                    No open work orders
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -11,6 +11,7 @@ venv/
 myprojectmanager/__pycache__/
 myprojectmanager/**/__pycache__/
 __pycache__/
+/**/__pycache__/
 
 # Ignore the Initialization Files 
 myprojectmanager/__init__.py
@@ -25,8 +26,13 @@ common/util/
 # Ignore Static Admin Files 
 static/admin/
 
+# Ignore the Debug Log 
+debug.log
+
 gis/
 vendor/select2/
 i18n/
 xregexp/
 lib/
+
+

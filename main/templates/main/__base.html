@@ -49,18 +49,18 @@
             {% block subnav %}
             <div class="sub_nav">
                 <button class="sub_nav_button">
-                    <a href="">Dashboard</a>
+                    <a href="{% url 'main:dashboard' %}">Dashboard</a>
                 </button>
                 <button class="sub_nav_button">
-                    Jobs
+                    <p>Jobs</p>
                     <ul>
                         <li>
-                            <a href="">Create Job</a>
+                            <a href="">View Jobs</a>
                         </li>
                     </ul>
                 </button>
                 <button class="sub_nav_button">
-                    Opportunities
+                    <p>Opportunities</p>
                     <ul>
                         <li>
                             <a href="">All Opportunities</a>
@@ -69,7 +69,7 @@
                             <a href="">Create Opportunity</a>
                         </li>
                         <li>
-                            <a href="">Bid Sheet</a>
+                            <a href="">Bid Sheets</a>
                         </li>
                         <li>
                             <a href="">Proposal Template</a>
@@ -78,22 +78,26 @@
                 </button>
 
                 <button class="sub_nav_button">
-                    Financials
-                    <li>
-                        <a href="">Expense Report</a>
-                    </li>
+                    <p>Financials</p>
+                    <ul>
+                        <li>
+                            <a href="">Expense Report</a>
+                        </li>
+                    </ul>
                 </button>
                 <button class="sub_nav_button">
-                    Reports
+                    <p>Reports</p>
                 </button>
                 <button class="sub_nav_button">
-                    Resources
-                    <li>
-                        <a href="">Calendar</a>
-                    </li>
-                    <li>
-                        <a href="">Time Sheet</a>
-                    </li>
+                    <p>Resources</p>
+                    <ul>
+                        <li>
+                            <a href="">Calendar</a>
+                        </li>
+                        <li>
+                            <a href="">Time Sheet</a>
+                        </li>
+                    </ul>
                 </button>
             </div>
 

@@ -6,7 +6,7 @@ from django.dispatch import receiver
 from notes.models import Note
 from projects.models import Project
 from resources.models import Resource
-from sites.models import Site 
+from sites.models import Site
 from trips.models import Trip
 
 
@@ -103,7 +103,7 @@ class WorkOrder(models.Model):
         # Get the instance's last work order
         last_work_order = WorkOrder.objects.filter(
             work_order_number__startswith=f'WO {year}'
-            ).order_by('-work_order_number').first()
+        ).order_by('-work_order_number').first()
 
         # If there is a last work order, get the last work order number and increment it by 1
         if last_work_order:
@@ -134,7 +134,7 @@ def create_work_order_for_project_sites(sender, instance, action, **kwargs):
                     )
 
 
-# If a project's status is changed to 'Planning' or 'Active', create a work order for each site in the project 
+# If a project's status is changed to 'Planning' or 'Active', create a work order for each site in the project
 # if a work order does not already exist
 @receiver(post_save, sender=Project)
 def update_work_order_for_project_sites_on_project_status_change(sender, instance, created, **kwargs):
@@ -160,8 +160,3 @@ def update_work_order_for_project_sites_on_project_status_change(sender, instanc
 
         #     # Add the note to the instance
         #     instance.project_notes.add(note)
-
-
-
-
-
