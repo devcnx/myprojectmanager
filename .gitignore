@@ -10,6 +10,7 @@ venv/
 # Ignore Python Cache Directories 
 myprojectmanager/__pycache__/
 myprojectmanager/**/__pycache__/
+__pycache__/
 
 # Ignore the Initialization Files 
 myprojectmanager/__init__.py
@@ -29,4 +30,3 @@ vendor/select2/
 i18n/
 xregexp/
 lib/
-__pycache__/
