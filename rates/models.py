@@ -9,7 +9,6 @@ class Rate(models.Model):
         ('Overtime', 'Overtime'),
         ('Double Time', 'Double Time'),
     )
-
     rate_id = models.AutoField(
         primary_key=True,
         editable=False,
@@ -21,38 +20,20 @@ class Rate(models.Model):
         choices=RATE_TYPE_CHOICES,
         verbose_name='Rate Type',
         db_column='rate_type',
+        default='Standard',
     )
     rate_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         verbose_name='Rate Amount',
         db_column='rate_amount',
-        default=0.00,
-        help_text='',
     )
 
     class Meta:
-        db_table = 'rates' 
+        db_table = 'rates'
         verbose_name = 'Rate'
         verbose_name_plural = 'Rates'
-        ordering = ['rate_type']
+        ordering = ['rate_id']
 
     def __str__(self):
         return f'{self.rate_amount:,.2f} Per Hour ({self.rate_type})'
-
-    def clean(self):
-        if self.rate_amount < 0 or self.rate_amount == 0:
-            raise ValidationError('Rate Must Be Greater Than Zero')
-        else:
-            return self.rate_amount
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-
-
-
-        
-
-

@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -27,7 +28,6 @@ class SiteType(models.Model):
 class Site(models.Model):
     site_id = models.IntegerField(
         primary_key=True,
-        editable=False,
         verbose_name='Site ID',
         db_column='site_id',
     )
@@ -35,6 +35,13 @@ class Site(models.Model):
         max_length=100,
         verbose_name='Site Name',
         db_column='site_name',
+    )
+    site_type = models.ForeignKey(
+        SiteType,
+        on_delete=models.CASCADE,
+        verbose_name='Site Type',
+        db_column='site_type_id',
+        default=1,
     )
     address = models.CharField(
         max_length=255,
@@ -56,10 +63,16 @@ class Site(models.Model):
         verbose_name='Zip Code',
         db_column='zip_code',
     )
+    SITE_COUNTRY_CHOICES = (
+        ('US', 'US'),
+        ('CA', 'CA'),
+    )
     country = models.CharField(
         max_length=50,
         verbose_name='Country',
         db_column='country',
+        choices=SITE_COUNTRY_CHOICES,
+        default='US',
     )
     phone = models.CharField(
         max_length=20,
@@ -68,11 +81,28 @@ class Site(models.Model):
         blank=True,
         null=True,
     )
-    site_type = models.ForeignKey(
-        SiteType,
+    added_on = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Added On',
+        db_column='added_on',
+    )
+    added_by = models.ForeignKey(
+        User,
         on_delete=models.CASCADE,
-        verbose_name='Site Type',
-        db_column='site_type_id',
+        verbose_name='Added By',
+        db_column='added_by',
+    )
+    modified_on = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Modified On',
+        db_column='modified_on',
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Modified By',
+        db_column='modified_by',
+        related_name='site_modified_by',
     )
 
     class Meta:
@@ -83,3 +113,11 @@ class Site(models.Model):
 
     def __str__(self):
         return f'{self.site_id:04d} {self.site_name}'
+
+    def save(self, user=None, *args, **kwargs):
+        if user and not self.added_by:
+            self.added_by = user
+        if user:
+            self.modified_by = user
+        super(Site, self).save(*args, **kwargs)
+        return user

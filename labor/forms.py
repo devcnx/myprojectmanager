@@ -1,10 +1,10 @@
 from django import forms
-from .models import LaborHours 
+from .models import LaborHours
 
 
 class LaborHoursForm(forms.ModelForm):
     class Meta:
-        model = LaborHours 
+        model = LaborHours
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -23,6 +23,3 @@ class LaborHoursForm(forms.ModelForm):
                 'max': '24',
             }
         )
-
-
-

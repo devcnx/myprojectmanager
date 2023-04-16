@@ -1,11 +1,11 @@
 from customers.models import CustomerContact
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from equipment.models import Equipment
 from labor.models import LaborHours
 from materials.models import Material
-from projects.models import Project 
+from projects.models import Project
 from travel.models import TravelHours, TravelExpense
 
 
@@ -99,7 +99,7 @@ class Bid(models.Model):
     )
     last_updated_by = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,   
+        on_delete=models.CASCADE,
         verbose_name='Bid Updated By',
         db_column='bid_updated_by',
         related_name='bid_updated_by',
@@ -116,10 +116,11 @@ class Bid(models.Model):
 
     def save(self, user=None, *args, **kwargs):
         if user and not self.created_by:
-            self.created_by = user 
+            self.created_by = user
         if user:
-            self.last_updated_by = user 
+            self.last_updated_by = user
         super(Bid, self).save(*args, **kwargs)
+
 
 def create_bid(sender, instance, created, **kwargs):
     if created and instance.is_new_project:
@@ -140,5 +141,6 @@ def create_bid(sender, instance, created, **kwargs):
         # Update the instance to set is_new_project to False
         instance.is_new_project = False
         instance.save()
+
 
 post_save.connect(create_bid, sender=Project)

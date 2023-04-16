@@ -47,21 +47,20 @@ class TravelHours(models.Model):
     )
 
     class Meta:
-        db_table='travel'
-        verbose_name='Travel'
-        verbose_name_plural='Travel'
+        db_table = 'travel'
+        verbose_name = 'Travel'
+        verbose_name_plural = 'Travel'
         ordering = ['-travel_id']
 
     def __str__(self):
         return f'{self.travel_type} - {self.travel_hours} Hours'
 
-
     # def save(self, *args, **kwargs):
     #     # Determine the week day based on the labor date
     #     week_day = self.travel_date.weekday() # 0 = Monday, 6 = Sunday
     #     # Find the number of days left until the end of the week (Sunday)
-    #     days_to_end_of_week = 6 - week_day 
-    #     # Add the number of days to the labor date to get the week ending date 
+    #     days_to_end_of_week = 6 - week_day
+    #     # Add the number of days to the labor date to get the week ending date
     #     self.week_ending = self.labor_date + timedelta(days=days_to_end_of_week)
     #     super().save(*args, **kwargs)
 
@@ -128,9 +127,9 @@ class TravelExpense(models.Model):
     # )
 
     class Meta:
-        db_table='travel_expense'
-        verbose_name='Travel Expense'
-        verbose_name_plural='Travel Expenses'
+        db_table = 'travel_expense'
+        verbose_name = 'Travel Expense'
+        verbose_name_plural = 'Travel Expenses'
         ordering = ['-travel_expense_id']
 
     def __str__(self):
@@ -144,4 +143,3 @@ class TravelExpense(models.Model):
     #     # Add the number of days to the labor date to get the week ending date
     #     self.week_ending = self.expense_date + timedelta(days=days_to_end_of_week)
     #     super().save(*args, **kwargs)
-

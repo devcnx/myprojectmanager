@@ -5,8 +5,9 @@ from django.urls import include, path
 
 urlpatterns = [
     path('', include('main.urls')),
-    # path('work_orders/', include('work_orders.urls')),
+    path('projects/', include('projects.urls')),
+    path('work_orders/', include('work_orders.urls')),
     path('admin/', admin.site.urls),
 ]
 
-# urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class VendorType(models.Model):
     vendor_type_id = models.AutoField(
         primary_key=True,
@@ -20,8 +21,8 @@ class VendorType(models.Model):
         ordering = ['vendor_type']
 
     def __str__(self):
-        return self.vendor_type 
-        
+        return self.vendor_type
+
 
 class Vendor(models.Model):
     vendor_id = models.AutoField(
@@ -60,7 +61,7 @@ class VendorContact(models.Model):
         db_column='vendor_contact_id',
     )
     vendor = models.ForeignKey(
-        Vendor, 
+        Vendor,
         on_delete=models.CASCADE,
         verbose_name='Vendor',
         db_column='vendor_id',
@@ -105,4 +106,3 @@ class VendorContact(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
-

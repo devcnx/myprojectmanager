@@ -3,9 +3,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
-from trips.models import Trip
 from projects.models import Project
-from work_orders.models import WorkOrder
+from work_orders.models import WorkOrder, WorkOrderTrip
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -28,8 +27,6 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['closed_work_orders'] = self.get_closed_work_orders()
         context['cancelled_work_orders'] = self.get_cancelled_work_orders()
         context['projects'] = Project.objects.all()
-        context['work_order_trips_count'] = self.get_work_order_trips_count(
-            context['work_orders'])
 
         return context
 
@@ -44,7 +41,3 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def handle_no_permission(self):
         return redirect(reverse_lazy('admin:index'))
-
-    def get_work_order_trips_count(self, work_orders):
-        trips = Trip.objects.filter(trip_id__in=work_orders)
-        return trips.count()

@@ -1,11 +1,11 @@
 from customers.models import CustomerContact
 from datetime import date
 from django.apps import apps
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import m2m_changed
 from notes.models import Note
-from sites.models import Site 
+from sites.models import Site
 
 
 class Project(models.Model):
@@ -99,19 +99,18 @@ class Project(models.Model):
     )
 
     class Meta:
-        db_table='projects'
-        verbose_name='Project'
-        verbose_name_plural='Projects'
-        ordering=['-project_start']
+        db_table = 'projects'
+        verbose_name = 'Project'
+        verbose_name_plural = 'Projects'
+        ordering = ['-project_start']
 
     def __str__(self):
         return f'({self.project_number}) {self.project_name}'
 
     def save(self, user=None, *args, **kwargs):
         if user and not self.created_by:
-            self.created_by = user 
+            self.created_by = user
         if user:
-            self.last_updated_by = user 
+            self.last_updated_by = user
         super(Project, self).save(*args, **kwargs)
         return user
-    

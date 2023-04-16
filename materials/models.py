@@ -1,5 +1,6 @@
+from django.contrib.auth.models import User
 from django.db import models
-from vendors.models import Vendor 
+from vendors.models import Vendor
 
 
 class Material(models.Model):
@@ -97,6 +98,12 @@ class MaterialVendor(models.Model):
         blank=True,
         null=True,
     )
+    last_modified_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Last Modified By',
+        db_column='last_modified_by',
+    )
 
     class Meta:
         db_table = 'material_vendors'
@@ -113,5 +120,3 @@ class MaterialVendor(models.Model):
         self.vendor_part_number = self.vendor_part_number.lower()
         self.vendor_unit_of_measure = self.vendor_unit_of_measure.lower()
         super(MaterialVendor, self).save(*args, **kwargs)
-
-

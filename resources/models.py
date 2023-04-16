@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ResourceStatus(models.Model):
     resource_status_id = models.AutoField(
         primary_key=True,

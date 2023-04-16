@@ -1,4 +1,4 @@
-from django import forms 
+from django import forms
 from .models import TravelHours, TravelExpense
 
 
@@ -23,12 +23,11 @@ class TravelHoursForm(forms.ModelForm):
                 'max': '24',
             }
         )
-        
 
 
 class TravelExpenseForm(forms.ModelForm):
     class Meta:
-        model = TravelExpense 
+        model = TravelExpense
         fields = '__all__'
         readonly_fields = ('week_ending',)
 

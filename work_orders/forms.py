@@ -1,5 +1,6 @@
-from django import forms 
-from .models import WorkOrder 
+from django import forms
+from projects.models import Project
+from .models import WorkOrder, WorkOrderTrip
 
 
 class WorkOrderForm(forms.ModelForm):
@@ -13,3 +14,8 @@ class WorkOrderForm(forms.ModelForm):
             'work_order_site': forms.Select(attrs={'readonly': 'readonly'}),
         }
 
+
+class WorkOrderTripForm(forms.ModelForm):
+    class Meta:
+        model = WorkOrderTrip
+        fields = '__all__'

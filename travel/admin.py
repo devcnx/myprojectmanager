@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .forms import TravelHoursForm, TravelExpenseForm
-from .models import TravelHours, TravelExpense 
+from .models import TravelHours, TravelExpense
 
 
 class TravelHoursAdmin(admin.ModelAdmin):
@@ -11,7 +11,7 @@ admin.site.register(TravelHours, TravelHoursAdmin)
 
 
 class TravelExpenseAdmin(admin.ModelAdmin):
-    form = TravelExpenseForm 
+    form = TravelExpenseForm
 
 
 admin.site.register(TravelExpense, TravelExpenseAdmin)

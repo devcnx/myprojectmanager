@@ -12,25 +12,41 @@
         <div class="overview_item">
             <div class="overview_item_title">Open Work Orders</div>
             {% if open_work_orders %}
+            <div class="overview_item_value overview_header">
+                <p>
+                    Work Order
+                </p>
+                <p>
+                    Project
+                </p>
+                <p>
+                    Site
+                </p>
+                <p>
+                    Status
+                </p>
+                <p>
+                    Last Updated
+                </p>
+            </div>
             {% for work_order in open_work_orders %}
             <div class="overview_item_value">
                 <p>
-                    {{ work_order.work_order_number }}
+                    <a href="">{{ work_order.work_order_number }}</a>
                 </p>
                 <p>
-                    {{ work_order.work_order_project.project_number}} {{ work_order.work_order_project.project_name }}
+                    {{ work_order.work_order_project.project_number}}
+                    {{ work_order.work_order_project.project_name }}
                 </p>
                 <p>
                     {{ work_order.work_order_site }}
                 </p>
-                {% if work_order_trips_count == 0 %}
-                <a href="">Add Trip </a>
-                {% endif %}
-                {% if work_order_trips_count > 0 %}
                 <p>
-                    {{ work_order_trips_count }} Trip(s)
+                    {{ work_order.work_order_status }}
                 </p>
-                {% endif %}
+                <p>
+                    {{ work_order.last_updated_on }}
+                </p>
             </div>
             {% endfor %}
             {% else %}

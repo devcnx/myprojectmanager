@@ -1,3 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from .forms import ProjectForm
 
-# Create your views here.
+
+def add_project(request):
+    return render(request, 'projects/add_project.html')
