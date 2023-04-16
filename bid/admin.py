@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .forms import BidForm
+from .forms import AdminBidForm
 from .models import Bid
 
 
 class BidAdmin(admin.ModelAdmin):
-    form = BidForm
+    form = AdminBidForm
     list_display = ('bid_id', 'bid_type', 'bid_status', 'bid_project',
                     'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
     search_fields = ('bid_type', 'bid_status', 'bid_project',
@@ -37,6 +37,7 @@ class BidAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         obj.last_updated_by = request.user
+        obj.save(user=request.user)
         super().save_model(request, obj, form, change)
 
 

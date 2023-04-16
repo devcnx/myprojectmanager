@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from projects.models import Project
-from work_orders.models import WorkOrder, WorkOrderTrip
+from work_orders.models import WorkOrder
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -27,7 +27,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['closed_work_orders'] = self.get_closed_work_orders()
         context['cancelled_work_orders'] = self.get_cancelled_work_orders()
         context['projects'] = Project.objects.all()
-
+        context['recently_closed_work_orders'] = self.get_recently_closed_work_orders()
         return context
 
     def get_open_work_orders(self):
@@ -35,6 +35,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_closed_work_orders(self):
         return WorkOrder.objects.filter(work_order_status='Closed')
+
+    def get_recently_closed_work_orders(self):
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        return WorkOrder.objects.filter(work_order_status='Closed', last_updated_on__gte=seven_days_ago)
 
     def get_cancelled_work_orders(self):
         return WorkOrder.objects.filter(work_order_status='Cancelled')

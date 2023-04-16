@@ -56,18 +56,21 @@ class Bid(models.Model):
         verbose_name='Bid Labor Hours',
         db_column='bid_labor_hours',
         default=0.0,
+        blank=True,
     )
     bid_travel_hours = models.ManyToManyField(
         TravelHours,
         verbose_name='Bid Travel Hours',
         db_column='bid_travel_hours',
         default=0.0,
+        blank=True,
     )
     bid_travel_expenses = models.ManyToManyField(
         TravelExpense,
         verbose_name='Bid Travel Expenses',
         db_column='bid_travel_expenses',
         default=0.0,
+        blank=True,
     )
     bid_materials = models.ManyToManyField(
         Material,

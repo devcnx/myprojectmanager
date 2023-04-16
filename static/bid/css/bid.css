@@ -1,0 +1,14 @@
+@charset "utf-8";
+
+.bid {
+    /* border: 1px solid #ddd; */
+}
+
+.bid_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}

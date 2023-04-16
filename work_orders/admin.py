@@ -14,10 +14,10 @@ class WorkOrderAdmin(admin.ModelAdmin):
     readonly_fields = ('work_order_number',
                        'work_order_project', 'work_order_site')
     ordering = ('work_order_number',)
-    filter_horizontal = ('work_order_notes', 'work_order_resources')
+    filter_horizontal = ('work_order_notes',)
     fieldsets = (
         ('Work Order Information', {
-            'fields': ('work_order_number', 'work_order_project', 'work_order_site', 'work_order_status', 'work_order_notes', 'work_order_resources')
+            'fields': ('work_order_number', 'work_order_project', 'work_order_site', 'work_order_status', 'work_order_notes')
         }),
     )
 

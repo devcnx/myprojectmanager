@@ -1,0 +1,40 @@
+{% extends 'main/__base.html' %}
+{% block subtitle %} | Bids {% endblock %}
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'bid/css/bid.css' %}">
+{% endblock %}
+{% block scripts %}
+{% endblock %}
+{% block content %}
+
+
+{% for bid in bids_draft %}
+<div class="bid">
+    <div class="bid_header">
+        <a href="{% url 'bid:bid_details' bid.pk %}">
+            <h2>Project : {{ bid.bid_project.project_name }} </h2>
+        </a>
+        <p><b>Status : </b>{{ bid.bid_status }}</p>
+    </div>
+    <div class="bid_body">
+        <div class="bid_body_left">
+            <p>Site Count: {{ site_count }}</p>
+            <!-- <p>Job Type: {{ bid.job.job_type }}</p> -->
+            <!-- <p>Job Status: {{ bid.job.job_status }}</p> -->
+            <!-- <p>Job Priority: {{ bid.job.job_priority }}</p> -->
+            <!-- <p>Job Location: {{ bid.job.job_location }}</p> -->
+            <!-- <p>Job Description: {{ bid.job.description }}</p> -->
+        </div>
+        <div class="bid_body_right">
+            <!-- <p>Job Number: {{ bid.job.job_number }}</p>
+            <p>Job Type: {{ bid.job.job_type }}</p>
+            <p>Job Status: {{ bid.job.job_status }}</p>
+            <p>Job Priority: {{ bid.job.job_priority }}</p>
+            <p>Job Location: {{ bid.job.job_location }}</p>
+            <p>Job Description: {{ bid.job.description }}</p> -->
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -2,63 +2,20 @@
 {% block subtitle %} | Dashboard {% endblock %}
 {% load static %}
 {% block styles %}
+<link rel="stylesheet" href="{% static 'main/css/dashboard.css' %}">
 {% endblock %}
 {% block scripts %}
+<script src="{% static 'main/js/dashboard.js' %}"></script>
 {% endblock %}
 {% block content %}
 
-<div class="overview_container">
-    <div class="overview">
-        <div class="overview_item">
-            <div class="overview_item_title">Open Work Orders</div>
-            {% if open_work_orders %}
-            <div class="overview_item_value overview_header">
-                <p>
-                    Work Order
-                </p>
-                <p>
-                    Project
-                </p>
-                <p>
-                    Site
-                </p>
-                <p>
-                    Status
-                </p>
-                <p>
-                    Last Updated
-                </p>
-            </div>
-            {% for work_order in open_work_orders %}
-            <div class="overview_item_value">
-                <p>
-                    <a href="">{{ work_order.work_order_number }}</a>
-                </p>
-                <p>
-                    {{ work_order.work_order_project.project_number}}
-                    {{ work_order.work_order_project.project_name }}
-                </p>
-                <p>
-                    {{ work_order.work_order_site }}
-                </p>
-                <p>
-                    {{ work_order.work_order_status }}
-                </p>
-                <p>
-                    {{ work_order.last_updated_on }}
-                </p>
-            </div>
-            {% endfor %}
-            {% else %}
-            <div class="overview_item_value">
-                <p>
-                    No open work orders
-                </p>
-            </div>
-            {% endif %}
-        </div>
-
-    </div>
+<div class="open_work_orders">
+    {% include 'main/open_work_orders.html' %}
 </div>
+
+<div class="recently_closed_work_orders">
+    {% include 'main/recently_closed_work_orders.html' %}
+</div>
+
 
 {% endblock %}

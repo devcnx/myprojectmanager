@@ -74,11 +74,7 @@ class WorkOrder(models.Model):
         Note,
         verbose_name='Work Order Notes',
         db_column='work_order_notes',
-    )
-    work_order_resources = models.ManyToManyField(
-        Resource,
-        verbose_name='Work Order Resources',
-        db_column='work_order_resources',
+        blank=True,
     )
 
     class Meta:
@@ -89,6 +85,10 @@ class WorkOrder(models.Model):
 
     def __str__(self):
         return str(self.work_order_number)
+
+    def save(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().save(*args, **kwargs)
 
     @staticmethod
     def get_next_work_order_number():
@@ -184,18 +184,26 @@ class WorkOrderTrip(models.Model):
     trip_start_date = models.DateField(
         verbose_name='Trip Start Date',
         db_column='trip_start_date',
+        blank=True,
+        null=True,
     )
     trip_start_time = models.TimeField(
         verbose_name='Trip Start Time',
         db_column='trip_start_time',
+        blank=True,
+        null=True,
     )
     trip_end_date = models.DateField(
         verbose_name='Trip End Date',
         db_column='trip_end_date',
+        blank=True,
+        null=True,
     )
     trip_end_time = models.TimeField(
         verbose_name='Trip End Time',
         db_column='trip_end_time',
+        blank=True,
+        null=True,
     )
     trip_project_manager = models.ForeignKey(
         Resource,
@@ -258,7 +266,7 @@ class WorkOrderTrip(models.Model):
         ordering = ['trip_start_date', 'trip_start_time']
 
     def __str__(self):
-        return self.trip_number
+        return str(self.trip_number)
 
     def save(self, *args, **kwargs):
         if not self.trip_number:
@@ -267,4 +275,5 @@ class WorkOrderTrip(models.Model):
                 work_order=self.work_order).count()
             # Set the trip number to the next available number
             self.trip_number = existing_trips + 1
+        user = kwargs.pop('user', None)
         super(WorkOrderTrip, self).save(*args, **kwargs)

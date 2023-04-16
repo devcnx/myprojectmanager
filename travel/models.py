@@ -86,6 +86,13 @@ class TravelExpense(models.Model):
         verbose_name='Expense Type',
         db_column='expense_type',
     )
+    expense_quantity = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        verbose_name='Expense Quantity',
+        db_column='expense_quantity',
+        default=0.00,
+    )
     expense_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,

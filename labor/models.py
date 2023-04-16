@@ -33,7 +33,7 @@ class LaborHours(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Labor Rate',
         db_column='labor_rate',
-        default=2,
+        default=1,
     )
     labor_hours_quantity = models.DecimalField(
         max_digits=5,
@@ -54,7 +54,7 @@ class LaborHours(models.Model):
         db_table = 'labor'
         verbose_name = 'Labor'
         verbose_name_plural = 'Labor'
-        ordering = ['-labor_id']
+        ordering = ['labor_id']
 
     def __str__(self):
         return f'{self.labor_type} - {self.labor_hours} Hours'
