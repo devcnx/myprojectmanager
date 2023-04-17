@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import formset_factory
 from labor.models import LaborHours
+from materials.models import Material
 from rates.models import Rate
 from travel.models import TravelHours, TravelExpense
 from .models import Bid
@@ -91,3 +92,26 @@ class BidTravelExpenseForm(forms.Form):
 
 BidTravelExpenseFormSet = formset_factory(
     BidTravelExpenseForm, extra=0, formset=forms.BaseFormSet, min_num=0)
+
+
+class BidMaterialForm(forms.Form):
+    material_id = forms.IntegerField(
+        required=False, widget=forms.HiddenInput())
+    material = forms.ModelChoiceField(
+        queryset=Material.objects.all(), empty_label=None)
+    material_quantity = forms.DecimalField(
+        max_digits=10, decimal_places=2, initial=0.00)
+    material_cost = forms.DecimalField(
+        max_digits=10, decimal_places=2, initial=0.00)
+    can_delete = forms.BooleanField(
+        required=False, initial=False, widget=forms.HiddenInput())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.initial.get('material_id'):
+            self.fields['can_delete'].widget = forms.CheckboxInput()
+            self.fields['can_delete'].label = 'Delete'
+
+
+BidMaterialFormSet = formset_factory(
+    BidMaterialForm, extra=0, formset=forms.BaseFormSet, min_num=0)

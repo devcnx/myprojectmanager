@@ -75,6 +75,42 @@
     <button type="button" id="add_travel_expense">Add Travel Expense Entry</button>
     <button type="button" id="remove_travel_expense">Remove Last Travel Expense Entry</button>
 
+    <h3>Materials</h3>
+    <div class="bid_materials">
+
+        <div class="row">
+            <div class="col-md-5">
+                <label>Available Materials</label>
+                <input type="text" id="search_material" placeholder="Search for Material..." />
+                <select id="available_materials" size="10" multiple style="width:100%;">
+                    {% for material in all_materials %}
+                    <option value="{{ material.material_id }}">
+                        ({{ material.manufacturer }}) {{ material.description }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <div>
+                    <button type="button" id="include_material">Include</button>
+                    <button type="button" id="exclude_material">Exclude</button>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label>Selected Materials</label>
+                <input type="text" id="search_selected_material" placeholder="Search for Material..." />
+                <select id="selected_materials" size="10" multiple style="width:100%;">
+                    {% for material in bid_materials %}
+                    <option value="{{ material.material_id }}">
+                        ({{ material.manufacturer }}) {{ material.description }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+    </div>
+
 
     <input type="submit" value="Save" />
 </form>

@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from labor.models import LaborHours
+from materials.models import Material
 from travel.models import TravelHours, TravelExpense
 from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm
 from .models import Bid
@@ -52,6 +53,8 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user
         context['bid'] = self.get_bid()
         context['bid_form'] = BidForm(instance=self.get_bid())
+        context['all_materials'] = self.get_all_materials()
+        context['unique_manufacturers'] = self.get_unique_manufacturers()
 
         labor_hours_initial = [
             {
@@ -93,6 +96,12 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
     def get_bid(self):
         return Bid.objects.get(pk=self.kwargs['pk'])
 
+    def get_all_materials(self):
+        return Material.objects.all()
+
+    def get_unique_manufacturers(self):
+        return Material.get_unique_manufacturers()
+
     def post(self, request, *args, **kwargs):
         bid = self.get_bid()
         bid_form = BidForm(request.POST, instance=bid)
@@ -105,6 +114,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
 
         if bid_form.is_valid() and labor_hours_formset.is_valid() and travel_hours_formset.is_valid() and travel_expense_formset.is_valid():
             bid_form.instance.last_updated_by = request.user
+            bid.bid_materials.set(bid_form.cleaned_data['materials'])
             bid_form.save()
 
             for form in labor_hours_formset:
