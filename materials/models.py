@@ -35,6 +35,9 @@ class Material(models.Model):
     def __str__(self):
         return f'{self.description} | {self.manufacturer}'
 
+    def get_unique_manufacturers():
+        return Material.objects.values_list('manufacturer', flat=True).distinct()
+
 
 class MaterialVendor(models.Model):
     id = models.AutoField(
