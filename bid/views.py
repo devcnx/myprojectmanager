@@ -79,7 +79,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
 
         travel_expense_initial = [
             {
-                'expense_id': te.travel_expense_id,
+                'travel_expense_id': te.travel_expense_id,
                 'expense_type': te.expense_type,
                 'expense_quantity': te.expense_quantity,
                 'expense_amount': te.expense_amount,
@@ -147,11 +147,9 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
 
             for form in travel_expense_formset:
                 travel_expense_data = form.cleaned_data
-                travel_expense_id = travel_expense_data.get(
-                    'travel_expense_id')
-                if travel_expense_id:
-                    travel_expense = TravelExpense.objects.get(
-                        pk=travel_expense_id)
+                expense_id = travel_expense_data.get('travel_expense_id')
+                if expense_id:
+                    travel_expense = TravelExpense.objects.get(pk=expense_id)
                     if form.cleaned_data.get('can_delete'):
                         travel_expense.delete()
                         continue
@@ -165,6 +163,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
                     travel_expense.save()
                     bid.bid_travel_expenses.add(travel_expense)
 
+            bid.save()
             return HttpResponseRedirect(reverse('bid:bid_details', args=[bid.pk]))
         else:
             context = self.get_context_data()

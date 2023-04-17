@@ -68,18 +68,17 @@ const addForm = (button, prefix, className) => {
 };
 
 
-
-
 const removeLastForm = (prefix, className) => {
     const formIndex = parseInt($(`#${prefix}-TOTAL_FORMS`).value);
     if (formIndex === 0) {
         return;
     }
-    if (formIndex > 1) {
-        /* Get the count of .dynamic_form */
+    if (formIndex > 0) {
+        /* Get the count of forms */
         const forms = document.querySelectorAll(`.${prefix}-form.${className}`);
         const formCount = forms.length;
         if (formCount > 0) {
+            /* Remove the last form */
             const formToRemove = forms[formCount - 1];
             formToRemove.remove();
             $(`#${prefix}-TOTAL_FORMS`).value = formIndex - 1;
@@ -91,10 +90,10 @@ const removeLastForm = (prefix, className) => {
 document.addEventListener('DOMContentLoaded', () => {
     const init = () => {
         const addLaborHoursButton = $("#add_labor_hours");
-        const removeLaborHoursButton = $("#remove_labor_hours");
+        const addTravelHoursButton = $("#add_travel_hours");
         const addTravelExpenseButton = $("#add_travel_expense");
 
-        const addTravelHoursButton = $("#add_travel_hours");
+        const removeLaborHoursButton = $("#remove_labor_hours");
         const removeTravelHoursButton = $("#remove_travel_hours");
         const removeTravelExpenseButton = $("#remove_travel_expense");
 

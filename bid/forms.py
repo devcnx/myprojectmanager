@@ -29,7 +29,7 @@ class BidLaborHoursForm(forms.Form):
     labor_rate = forms.ModelChoiceField(
         queryset=Rate.objects.all(), empty_label=None)
     labor_hours_quantity = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=1.00)
+        max_digits=10, decimal_places=2, initial=0.00)
     labor_hours = forms.DecimalField(
         max_digits=10, decimal_places=2, initial=0.00)
     can_delete = forms.BooleanField(
@@ -43,7 +43,7 @@ class BidLaborHoursForm(forms.Form):
 
 
 BidLaborHoursFormSet = formset_factory(
-    BidLaborHoursForm, extra=0, formset=forms.BaseFormSet, min_num=1)
+    BidLaborHoursForm, extra=0, formset=forms.BaseFormSet, min_num=0)
 
 
 class BidTravelHoursForm(forms.Form):
@@ -53,7 +53,7 @@ class BidTravelHoursForm(forms.Form):
     travel_rate = forms.ModelChoiceField(
         queryset=Rate.objects.all(), empty_label=None)
     travel_hours_quantity = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=1.00)
+        max_digits=10, decimal_places=2, initial=0.00)
     travel_hours = forms.DecimalField(
         max_digits=10, decimal_places=2, initial=0.00)
     can_delete = forms.BooleanField(
@@ -67,7 +67,7 @@ class BidTravelHoursForm(forms.Form):
 
 
 BidTravelHoursFormSet = formset_factory(
-    BidTravelHoursForm, extra=0, formset=forms.BaseFormSet, min_num=1)
+    BidTravelHoursForm, extra=0, formset=forms.BaseFormSet, min_num=0)
 
 
 class BidTravelExpenseForm(forms.Form):
@@ -76,7 +76,7 @@ class BidTravelExpenseForm(forms.Form):
     expense_type = forms.ChoiceField(
         choices=TravelExpense.EXPENSE_TYPE_CHOICES)
     expense_quantity = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=1.00)
+        max_digits=10, decimal_places=2, initial=0.00)
     expense_amount = forms.DecimalField(
         max_digits=10, decimal_places=2, initial=0.0)
     can_delete = forms.BooleanField(
@@ -90,4 +90,4 @@ class BidTravelExpenseForm(forms.Form):
 
 
 BidTravelExpenseFormSet = formset_factory(
-    BidTravelExpenseForm, extra=0, formset=forms.BaseFormSet, min_num=1)
+    BidTravelExpenseForm, extra=0, formset=forms.BaseFormSet, min_num=0)
