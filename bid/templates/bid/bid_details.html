@@ -10,9 +10,12 @@
 
 <form method="post">
     {% csrf_token %}
-    {{ bid_form.as_p }}
+    {{ bid_form.as_table }}
 
     <h3>Labor Hours</h3>
+    <div class="initial-labor_hours-form labor_hours-form" style="display:none;">
+        {{ labor_hours_formset.empty_form.as_table }}
+    </div>
     <input type="hidden" name="labor_hours-TOTAL_FORMS" id="labor_hours-TOTAL_FORMS"
         value="{{ labor_hours_formset.total_form_count }}" />
     <input type="hidden" name="labor_hours-INITIAL_FORMS" id="labor_hours-INITIAL_FORMS"
@@ -30,6 +33,9 @@
     <button type="button" id="remove_labor_hours">Remove Last Labor Entry</button>
 
     <h3>Travel Hours</h3>
+    <div class="initial-travel_hours-form travel_hours-form" style="display:none;">
+        {{ travel_hours_formset.empty_form.as_table }}
+    </div>
     <input type="hidden" name="travel_hours-TOTAL_FORMS" id="travel_hours-TOTAL_FORMS"
         value="{{ travel_hours_formset.total_form_count }}" />
     <input type="hidden" name="travel_hours-INITIAL_FORMS" id="travel_hours-INITIAL_FORMS"
@@ -47,6 +53,9 @@
     <button type="button" id="remove_travel_hours">Remove Last Travel Entry</button>
 
     <h3>Travel Expenses</h3>
+    <div class="initial-travel_expense-form travel_expense-form" style="display:none;">
+        {{ travel_expense_formset.empty_form.as_table }}
+    </div>
     <input type="hidden" name="travel_expense-TOTAL_FORMS" id="travel_expense-TOTAL_FORMS"
         value="{{ travel_expense_formset.total_form_count }}" />
     <input type="hidden" name="travel_expense-INITIAL_FORMS" id="travel_expense-INITIAL_FORMS"

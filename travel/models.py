@@ -55,15 +55,6 @@ class TravelHours(models.Model):
     def __str__(self):
         return f'{self.travel_type} - {self.travel_hours} Hours'
 
-    # def save(self, *args, **kwargs):
-    #     # Determine the week day based on the labor date
-    #     week_day = self.travel_date.weekday() # 0 = Monday, 6 = Sunday
-    #     # Find the number of days left until the end of the week (Sunday)
-    #     days_to_end_of_week = 6 - week_day
-    #     # Add the number of days to the labor date to get the week ending date
-    #     self.week_ending = self.labor_date + timedelta(days=days_to_end_of_week)
-    #     super().save(*args, **kwargs)
-
 
 class TravelExpense(models.Model):
     EXPENSE_TYPE_CHOICES = (
@@ -100,38 +91,6 @@ class TravelExpense(models.Model):
         db_column='expense_amount',
         default=0.00,
     )
-    # expense_date = models.DateField(
-    #     verbose_name='Expense Date',
-    #     db_column='expense_date',
-    # )
-    # week_ending = models.DateField(
-    #     verbose_name='Week Ending',
-    #     db_column='week_ending',
-    #     blank=True,
-    # )
-    # expense_for = models.ForeignKey(
-    #     Resource,
-    #     on_delete=models.CASCADE,
-    #     verbose_name='Expense For',
-    # )
-    # expense_created = models.DateTimeField(
-    #     auto_now_add=True,
-    #     verbose_name='Expense Created',
-    #     db_column='expense_created',
-    # )
-    # expense_updated = models.DateTimeField(
-    #     auto_now=True,
-    #     verbose_name='Expense Updated',
-    #     db_column='expense_updated',
-    # )
-    # expense_note = models.ForeignKey(
-    #     Note,
-    #     on_delete=models.CASCADE,
-    #     verbose_name='Expense Note',
-    #     db_column='expense_note',
-    #     blank=True,
-    #     null=True,
-    # )
 
     class Meta:
         db_table = 'travel_expense'
@@ -141,12 +100,3 @@ class TravelExpense(models.Model):
 
     def __str__(self):
         return f'{self.expense_type} - {self.expense_amount}'
-
-    # def save(self, *args, **kwargs):
-    #     # Determine the week day based on the labor date
-    #     week_day = self.expense_date.weekday()
-    #     # Find the number of days left until the end of the week (Sunday)
-    #     days_to_end_of_week = 6 - week_day
-    #     # Add the number of days to the labor date to get the week ending date
-    #     self.week_ending = self.expense_date + timedelta(days=days_to_end_of_week)
-    #     super().save(*args, **kwargs)
