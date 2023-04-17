@@ -44,7 +44,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
 
 class BidDetailView(LoginRequiredMixin, TemplateView):
-    model = Bid
+    model = Bid, LaborHours, TravelHours, TravelExpense
     template_name = 'bid/bid_details.html'
 
     def get_context_data(self, **kwargs):
@@ -79,7 +79,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
 
         travel_expense_initial = [
             {
-                'travel_expense_id': te.travel_expense_id,
+                'expense_id': te.travel_expense_id,
                 'expense_type': te.expense_type,
                 'expense_quantity': te.expense_quantity,
                 'expense_amount': te.expense_amount,
@@ -111,7 +111,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
                 labor_hours_data = form.cleaned_data
                 labor_id = labor_hours_data.get('labor_id')
                 if labor_id:
-                    labor_hours = LaborHours.objects.get(pk=labor_id)
+                    labor_hours = LaborHours.objects.get(labor_id=labor_id)
                     if form.cleaned_data.get('can_delete'):
                         labor_hours.delete()
                         continue

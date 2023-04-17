@@ -8,6 +8,9 @@
 {% endblock %}
 {% block content %}
 
+<button type="button" id="add_new_bid">Add New Bid</button>
+
+
 <form method="post">
     {% csrf_token %}
     {{ bid_form.as_table }}
@@ -24,9 +27,9 @@
         value="{{ labor_hours_formset.min_num }}" />
     <input type="hidden" name="labor_hours-MAX_NUM_FORMS" id="labor_hours-MAX_NUM_FORMS"
         value="{{ labor_hours_formset.max_num }}" />
-    {% for form in labor_hours_formset %}
+    {% for labor_form in labor_hours_formset %}
     <div class="labor_hours-form">
-        {{ form.as_table }}
+        {{ labor_form.as_table }}
     </div>
     {% endfor %}
     <button type="button" id="add_labor_hours">Add Labor Entry</button>
@@ -44,9 +47,9 @@
         value="{{ travel_hours_formset.min_num }}" />
     <input type="hidden" name="travel_hours-MAX_NUM_FORMS" id="travel_hours-MAX_NUM_FORMS"
         value="{{ travel_hours_formset.max_num }}" />
-    {% for form in travel_hours_formset %}
+    {% for travel_form in travel_hours_formset %}
     <div class="travel_hours-form">
-        {{ form.as_table }}
+        {{ travel_form.as_table }}
     </div>
     {% endfor %}
     <button type="button" id="add_travel_hours">Add Travel Entry</button>
@@ -64,9 +67,9 @@
         value="{{ travel_expense_formset.min_num }}" />
     <input type="hidden" name="travel_expense-MAX_NUM_FORMS" id="travel_expense-MAX_NUM_FORMS"
         value="{{ travel_expense_formset.max_num }}" />
-    {% for form in travel_expense_formset %}
+    {% for travel_expense_form in travel_expense_formset %}
     <div class="travel_expense-form">
-        {{ form.as_table }}
+        {{ travel_expense_form.as_table }}
     </div>
     {% endfor %}
     <button type="button" id="add_travel_expense">Add Travel Expense Entry</button>

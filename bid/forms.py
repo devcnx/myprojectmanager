@@ -17,7 +17,6 @@ class BidForm(forms.ModelForm):
     class Meta:
         model = Bid
         fields = '__all__'
-        readonly_fields = ('bid_project',)
         exclude = ('bid_labor_hours', 'bid_travel_hours',
                    'bid_travel_expenses', 'bid_materials', 'bid_equipment',
                    'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
