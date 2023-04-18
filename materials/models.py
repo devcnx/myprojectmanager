@@ -36,7 +36,11 @@ class Material(models.Model):
         return f'{self.description} | {self.manufacturer}'
 
     def get_unique_manufacturers():
-        return Material.objects.values_list('manufacturer', flat=True).distinct()
+        # Only return unique manufacturers
+        # Convert all manufacturers to lowercase
+        # Sort the list
+        # Return the list
+        return sorted(set([x.manufacturer.lower() for x in Material.objects.all()]))
 
 
 class MaterialVendor(models.Model):

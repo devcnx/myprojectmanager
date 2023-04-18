@@ -1,0 +1,48 @@
+{% extends 'main/__base.html' %}
+{% block subtitle %} | Material for {{ bid.bid_project.project_name }} {% endblock %}
+{% load static %}
+{% block styles %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="{% static 'bid/js/bid.js' %}"></script>
+{% endblock %}
+{% block content %}
+
+<h1>Material for {{ bid.bid_project.project_name }}</h1>
+<p>
+    Site Count : ({{ bid.bid_project.project_sites.count }})
+</p>
+{% for site in bid.bid_project.project_sites.all %}
+<small>
+    {{ site.site_id }} {{ site.site_name }}<br>
+    {{ site.address }},
+    {{ site.city }} {{ site.state }} {{ site.zip_code }}
+    {% if site.phone %}
+    <br>Phone: ({{ site.phone|slice:":3" }}) {{ site.phone|slice:"3:6" }}-{{ site.phone|slice:"6:10" }}
+    {% endif %}
+</small>
+{% endfor %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <h3>Material</h3>
+    <select id="material_selector" name="materials" multiple="multiple">
+        {% for material in all_materials %}
+        <option value="{{ material.material_id }}">
+            {{ material.description }}
+        </option>
+        {% endfor %}
+    </select>
+
+
+    <!-- <button type="button" id="add_material">Add Material Entry</button>
+    <button type="button" id="remove_material">Remove Last Material Entry</button>
+
+    <input type="submit" value="Save Bid" /> -->
+</form>
+
+{% endblock %}

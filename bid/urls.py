@@ -7,4 +7,6 @@ urlpatterns = [
     path('bid_sheets/', views.IndexView.as_view(), name='index'),
     path('bid_sheet_details/<int:pk>/',
          views.BidDetailView.as_view(), name='bid_details'),
+    path('bid_materials/<int:pk>/',
+         views.BidDetailsMaterialView.as_view(), name='bid_details_material'),
 ]

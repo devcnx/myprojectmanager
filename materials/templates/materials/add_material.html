@@ -1,0 +1,16 @@
+{% load static %}
+{% block styles %}
+<link rel="stylesheet" href="{% static 'materials/css/materials.css' %}">
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'materials/js/materials.js' %}"></script>
+{% endblock %}
+
+
+<div class="material_form_container">
+    <form method="post" id="add_material_form" data-url="{% url 'materials:add_material' %}">
+        {% csrf_token %}
+        {{ material_form.as_table }}
+        <input type="submit" value="Add Material">
+    </form>
+</div>

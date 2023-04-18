@@ -97,13 +97,16 @@
                         <li>
                             <a href="">Time Sheet</a>
                         </li>
+                        <li>
+                            <a href="{% url 'materials:add_material' %}">Materials</a>
+                        </li>
                     </ul>
                 </button>
             </div>
 
             {% endblock %}
 
-            <div class="content">
+            <div class=" content">
                 {% block content %}
                 {% endblock %}
             </div>

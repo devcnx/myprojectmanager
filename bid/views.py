@@ -4,9 +4,11 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import TemplateView
 from labor.models import LaborHours
+from materials.forms import MaterialForm
 from materials.models import Material
+from projects.models import Project
 from travel.models import TravelHours, TravelExpense
-from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm
+from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm, BidMaterialFormSet, BidMaterialForm
 from .models import Bid
 
 
@@ -25,7 +27,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context['bids_awarded'] = self.get_bids_by_status('Awarded')
         context['bids_lost'] = self.get_bids_by_status('Lost')
         context['bids_no_bid'] = self.get_bids_by_status('No Bid')
-        context['site_count'] = self.get_bid_project_sites_count()
         return context
 
     def get_queryset(self):
@@ -33,15 +34,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_bids_by_status(self, status):
         return Bid.objects.filter(bid_status=status)
-
-    def get_bid_project_sites_count(self):
-        for bid in self.get_queryset():
-            # Get the project.
-            project = bid.bid_project
-            # Get the sites for the project.
-            project_sites_count = project.project_sites.count()
-            # Return the count.
-            return project_sites_count
 
 
 class BidDetailView(LoginRequiredMixin, TemplateView):
@@ -53,8 +45,6 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user
         context['bid'] = self.get_bid()
         context['bid_form'] = BidForm(instance=self.get_bid())
-        context['all_materials'] = self.get_all_materials()
-        context['unique_manufacturers'] = self.get_unique_manufacturers()
 
         labor_hours_initial = [
             {
@@ -96,12 +86,6 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
     def get_bid(self):
         return Bid.objects.get(pk=self.kwargs['pk'])
 
-    def get_all_materials(self):
-        return Material.objects.all()
-
-    def get_unique_manufacturers(self):
-        return Material.get_unique_manufacturers()
-
     def post(self, request, *args, **kwargs):
         bid = self.get_bid()
         bid_form = BidForm(request.POST, instance=bid)
@@ -114,7 +98,6 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
 
         if bid_form.is_valid() and labor_hours_formset.is_valid() and travel_hours_formset.is_valid() and travel_expense_formset.is_valid():
             bid_form.instance.last_updated_by = request.user
-            bid.bid_materials.set(bid_form.cleaned_data['materials'])
             bid_form.save()
 
             for form in labor_hours_formset:
@@ -174,7 +157,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
                     bid.bid_travel_expenses.add(travel_expense)
 
             bid.save()
-            return HttpResponseRedirect(reverse('bid:bid_details', args=[bid.pk]))
+            return HttpResponseRedirect(reverse('bid:bid_details_material', args=[bid.pk]))
         else:
             context = self.get_context_data()
             context['bid_form'] = bid_form
@@ -182,3 +165,31 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
             context['travel_hours_formset'] = travel_hours_formset
             context['travel_expense_formset'] = travel_expense_formset
             return render(request, self.template_name, context)
+
+
+class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
+    template_name = 'bid/bid_details_material.html'
+
+    def get_context_data(self, **kwargs):
+        # Get the bid from the args passed from the bid detail view.
+        # This is the bid that we are editing.
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+
+        context = super().get_context_data(**kwargs)
+        context['bid'] = bid
+        context['bid_materials'] = bid.bid_materials.all()
+        context['all_materials'] = self.get_all_materials()
+        context['unique_manufacturers'] = self.get_unique_manufacturers()
+        context['project_sites'] = self.get_project_sites()
+
+        return context
+
+    def get_all_materials(self):
+        return Material.objects.all()
+
+    def get_unique_manufacturers(self):
+        return Material.get_unique_manufacturers()
+
+    def get_project_sites(self):
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+        return bid.bid_project.project_sites.all()
