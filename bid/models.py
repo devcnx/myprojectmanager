@@ -2,6 +2,7 @@ from customers.models import CustomerContact
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
+from django.utils import timezone
 from equipment.models import Equipment
 from labor.models import LaborHours
 from materials.models import Material
@@ -12,12 +13,13 @@ from travel.models import TravelHours, TravelExpense
 class Bid(models.Model):
     BID_TYPE_CHOICES = (
         ('Initial', 'Initial'),
-        ('Revision', 'Revision'),
+        ('Additional', 'Additional'),
         ('Change Order', 'Change Order'),
         ('Time & Material', 'Time & Material'),
         ('Warranty', 'Warranty'),
     )
     BID_STATUS_CHOICES = (
+        ('Generated', 'Generated'),
         ('Draft', 'Draft'),
         ('Approved (Internally)', 'Approved (Internally)'),
         ('Submitted to Customer', 'Submitted to Customer'),
@@ -43,7 +45,34 @@ class Bid(models.Model):
         choices=BID_STATUS_CHOICES,
         verbose_name='Bid Status',
         db_column='bid_status',
-        default='Draft',
+        default='Generated',
+    )
+    bid_due_date = models.DateField(
+        verbose_name='Bid Due Date',
+        db_column='bid_due_date',
+        blank=True,
+        null=True,
+    )
+    bid_due_time = models.TimeField(
+        verbose_name='Bid Due Time',
+        db_column='bid_due_time',
+        blank=True,
+        null=True,
+    )
+    bid_submitted = models.DateTimeField(
+        verbose_name='Bid Submitted',
+        db_column='bid_submitted',
+        blank=True,
+        null=True,
+    )
+    bid_submitted_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Bid Submitted By',
+        db_column='bid_submitted_by',
+        related_name='bid_submitted_by',
+        blank=True,
+        null=True,
     )
     bid_project = models.ForeignKey(
         Project,
@@ -55,21 +84,18 @@ class Bid(models.Model):
         LaborHours,
         verbose_name='Bid Labor Hours',
         db_column='bid_labor_hours',
-        default=0.0,
         blank=True,
     )
     bid_travel_hours = models.ManyToManyField(
         TravelHours,
         verbose_name='Bid Travel Hours',
         db_column='bid_travel_hours',
-        default=0.0,
         blank=True,
     )
     bid_travel_expenses = models.ManyToManyField(
         TravelExpense,
         verbose_name='Bid Travel Expenses',
         db_column='bid_travel_expenses',
-        default=0.0,
         blank=True,
     )
     bid_materials = models.ManyToManyField(
@@ -122,6 +148,9 @@ class Bid(models.Model):
             self.created_by = user
         if user:
             self.last_updated_by = user
+        if self.bid_status == 'Submitted to Customer':
+            self.bid_submitted = timezone.now()
+            self.bid_submitted_by = self.last_updated_by
         super(Bid, self).save(*args, **kwargs)
 
 
@@ -131,7 +160,7 @@ def create_bid(sender, instance, created, **kwargs):
         if Bid.objects.filter(bid_project=instance).exists():
             # Check if there's a bid with 'Initial' bid_type
             if bid.filter(bid_project=instance, bid_type='Initial').exists():
-                bid_type = 'Revision'
+                bid_type = 'Additional'
             else:
                 bid_type = 'Initial'
         else:

@@ -3,8 +3,11 @@
 {% load static %}
 {% block styles %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link href="{% static 'bid/css/bid.css' %}" rel="stylesheet">
 {% endblock %}
 {% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{% static 'materials/js/materials.js' %}"></script>
 {% endblock %}
 {% block content %}
@@ -27,17 +30,39 @@
 <form method="post">
     {% csrf_token %}
 
-    <h3>Material</h3>
-    <select id="available_materials" name="materials" multiple="multiple">
-        {% for material in all_materials %}
-        <option value="{{ material.material_id }}">
-            {{ material.description }}
-        </option>
-        {% endfor %}
-    </select>
+    <h2>Select Materials to Bid</h2>
+    <form method="post" id="material_form">
+        {% csrf_token %}
 
-    <select id="selected_materials" name="materials" multiple="multiple">
-    </select>
+        <!-- Filter by Manufacturer -->
+        <label for="manufacturer_select">Manufacturer : </label>
+        <select id="manufacturer_select" name="manufacturer_select">
+            <option value="All">All</option>
+            {% for manufacturer in unique_manufacturers %}
+            <option value="{{ manufacturer }}">{{ manufacturer }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Search -->
+        <label for="search_input">Search : </label>
+        <input type="text" id="search_input" name="search" placeholder="Search Materials...">
+
+        <div id="material_list" class="scrollable">
+            {% for material in all_materials %}
+            <div class="material_item" data-material-id="{{ material.material_id }}"
+                data-material-manufacturer="{{ material.manufacturer }}">
+                <label>
+                    <input type="checkbox" class="material_checkbox" name="material_{{ material.material_id }}"
+                        value="{{ material.material_id }}">
+                    {{ material.description }} | MFR : {{ material.manufacturer }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+
+
+
+    </form>
 
     <input type="submit" value="Save Bid" />
 </form>

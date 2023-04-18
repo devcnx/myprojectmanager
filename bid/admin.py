@@ -5,7 +5,7 @@ from .models import Bid
 
 class BidAdmin(admin.ModelAdmin):
     form = AdminBidForm
-    list_display = ('bid_id', 'bid_type', 'bid_status', 'bid_project',
+    list_display = ('bid_id', 'bid_type', 'bid_status', 'bid_due_date', 'bid_due_time', 'bid_project',
                     'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
     search_fields = ('bid_type', 'bid_status', 'bid_project',
                      'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
@@ -15,10 +15,10 @@ class BidAdmin(admin.ModelAdmin):
     filter_horizontal = ('bid_labor_hours', 'bid_travel_hours',
                          'bid_travel_expenses', 'bid_materials', 'bid_equipment')
     readonly_fields = ('created_on', 'created_by',
-                       'last_updated_on', 'last_updated_by', 'bid_project', 'bid_type')
+                       'last_updated_on', 'last_updated_by')
     fieldsets = (
         ('Bid Information', {
-            'fields': ('bid_type', 'bid_status', 'bid_project')
+            'fields': ('bid_type', 'bid_status', 'bid_project', 'bid_due_date', 'bid_due_time')
         }),
         ('Bid Labor', {
             'fields': ('bid_labor_hours',)
@@ -32,8 +32,10 @@ class BidAdmin(admin.ModelAdmin):
         ('Bid Equipment', {
             'fields': ('bid_equipment',)
         }),
+        (None, {
+            'fields': ('bid_submitted', 'bid_submitted_by')
+        })
     )
-    readonly_fields = ('bid_project',)
 
     def save_model(self, request, obj, form, change):
         if not change:

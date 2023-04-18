@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -19,7 +20,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         context['bids'] = self.get_queryset()
-        context['bids_draft'] = self.get_bids_by_status('Draft')
+        context['bids_generated'] = self.get_bids_by_status('Generated')
+        context['bids_additional'] = self.get_bids_by_status('Additional')
         context['bids_approved'] = self.get_bids_by_status(
             'Approved (Internally)')
         context['bids_submitted'] = self.get_bids_by_status(

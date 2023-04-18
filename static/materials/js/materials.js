@@ -50,3 +50,39 @@
 //     init();
 
 // });
+
+
+// const $ = selector => document.querySelector(selector);
+
+// document.addEventListener('DOMContentLoaded', () => {
+$(document).ready(function () {
+    const init = () => {
+        // This applies Select2 to the manufacturer dropdown
+        $("#manufacturer_select").select2({
+            placeholder: "Select a Manufacturer",
+            allowClear: true,
+        });
+
+        const filterMaterials = (event) => {
+            event.preventDefault();
+            var manufacturer = $("#manufacturer_select").val();
+            var searchValue = $("#search_input").val().toLowerCase();
+
+            $(".material_item").each(function () {
+                var materialManufacturer = $(this).data("material-manufacturer").toString().toLowerCase();
+                var materialDescription = $(this).text().toLowerCase();
+
+                if ((!manufacturer || materialManufacturer === manufacturer) && materialDescription.includes(searchValue)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
+        $('#manufacturer_select, #search_input').on('change input', filterMaterials);
+
+    };
+
+    init();
+});
