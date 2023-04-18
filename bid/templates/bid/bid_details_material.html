@@ -5,9 +5,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 {% endblock %}
 {% block scripts %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="{% static 'bid/js/bid.js' %}"></script>
+<script src="{% static 'materials/js/materials.js' %}"></script>
 {% endblock %}
 {% block content %}
 
@@ -30,7 +28,7 @@
     {% csrf_token %}
 
     <h3>Material</h3>
-    <select id="material_selector" name="materials" multiple="multiple">
+    <select id="available_materials" name="materials" multiple="multiple">
         {% for material in all_materials %}
         <option value="{{ material.material_id }}">
             {{ material.description }}
@@ -38,11 +36,10 @@
         {% endfor %}
     </select>
 
+    <select id="selected_materials" name="materials" multiple="multiple">
+    </select>
 
-    <!-- <button type="button" id="add_material">Add Material Entry</button>
-    <button type="button" id="remove_material">Remove Last Material Entry</button>
-
-    <input type="submit" value="Save Bid" /> -->
+    <input type="submit" value="Save Bid" />
 </form>
 
 {% endblock %}

@@ -8,7 +8,7 @@ from materials.forms import MaterialForm
 from materials.models import Material
 from projects.models import Project
 from travel.models import TravelHours, TravelExpense
-from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm, BidMaterialFormSet, BidMaterialForm
+from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm
 from .models import Bid
 
 

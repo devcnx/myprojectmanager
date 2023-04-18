@@ -53,20 +53,6 @@ const removeLastForm = (prefix, className) => {
     }
 };
 
-/* Iterates through the options in reverse order to avoid skipping options when trying to move them */
-const includeMaterial = (availableMaterialSelect, selectedMaterialsSelect) => {
-    for (let index = availableMaterialSelect.options.length - 1; index >= 0; index--) {
-        if (availableMaterialSelect.options[index].selected) {
-            const option = availableMaterialSelect.options[index];
-            const newOption = new Option(option.text, option.value);
-            selectedMaterialsSelect.add(newOption);
-            option.remove();
-
-        }
-    }
-};
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const init = () => {
         const addLaborHoursButton = $("#add_labor_hours");
@@ -118,45 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeLastForm('travel_expense', 'dynamic_travel_expense_form');
             });
         }
-
-        const includeMaterialButton = $("#include_material");
-        const excludeMaterialButton = $("#exclude_material");
-        const availableMaterialSelect = $("#available_materials");
-        const selectedMaterialsSelect = $("#selected_materials");
-
-        if (includeMaterialButton) {
-            includeMaterialButton.addEventListener('click', (event) => {
-                event.preventDefault();
-                console.log('include material button clicked');
-                includeMaterial(availableMaterialSelect, selectedMaterialsSelect);
-                console.log('material included');
-            });
-        }
-
-        if (excludeMaterialButton) {
-            excludeMaterialButton.addEventListener('click', (event) => {
-                event.preventDefault();
-                console.log('exclude material button clicked');
-                includeMaterial(selectedMaterialsSelect, availableMaterialSelect);
-                console.log('material excluded');
-            });
-        }
-
-
-
-
-
-        // const addMaterialButton = $("#add_material_button");
-        // if (addMaterialButton) {
-        //     console.log('add material button found');
-
-        //     addMaterialButton.addEventListener('click', (event) => {
-        //         console.log('add material button clicked');
-        //     });
-        // }
-
-
-
     };
     init();
 });

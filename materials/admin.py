@@ -3,8 +3,6 @@ from .forms import MaterialForm
 from .models import Material, MaterialVendor
 
 
-# admin.site.register(Material)
-
 class MaterialAdmin(admin.ModelAdmin):
     list_display = ('description',
                     'manufacturer', 'manufacturer_number')
