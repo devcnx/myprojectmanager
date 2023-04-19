@@ -5,7 +5,7 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from equipment.models import Equipment
 from labor.models import LaborHours
-from materials.models import Material
+from materials.models import MaterialOrder
 from projects.models import Project
 from travel.models import TravelHours, TravelExpense
 
@@ -98,10 +98,16 @@ class Bid(models.Model):
         db_column='bid_travel_expenses',
         blank=True,
     )
-    bid_materials = models.ManyToManyField(
-        Material,
-        verbose_name='Bid Materials',
-        db_column='bid_materials',
+    # bid_materials = models.ManyToManyField(
+    #     Material,
+    #     verbose_name='Bid Materials',
+    #     db_column='bid_materials',
+    #     blank=True,
+    # )
+    bid_material_orders = models.ManyToManyField(
+        MaterialOrder,
+        verbose_name='Bid Material Orders',
+        db_column='bid_material_orders',
         blank=True,
     )
     bid_equipment = models.ManyToManyField(

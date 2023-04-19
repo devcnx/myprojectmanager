@@ -1,6 +1,7 @@
 {% extends 'main/__base.html' %}
 {% block subtitle %} | Material for {{ bid.bid_project.project_name }} {% endblock %}
 {% load static %}
+{% load custom_filters %}
 {% block styles %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link href="{% static 'bid/css/bid.css' %}" rel="stylesheet">
@@ -56,6 +57,25 @@
                         value="{{ material.material_id }}">
                     {{ material.description }} | MFR : {{ material.manufacturer }}
                 </label>
+                <input type="number" class="quantitiy_input" name="quantity_{{ material.material_id }}"
+                    placeholder="Quantity" style="display: none;" />
+                <div class="vendor_prices">
+                    {% for material_vendor in material_vendors|dictsort:'vendor_unit_price' %}
+                    {% if material_vendor.material.material_id == material.material_id %}
+                    <div class="vendor_details">
+
+                        {{ material_vendor.vendor.vendor_name }} :
+                        ${{ material_vendor.vendor_unit_price }} / {{ material_vendor.vendor_unit_of_measure }} | <a
+                            href="{{ material_vendor.vendor_product_link }}" target="_blank">Link</a>
+
+                        {% if material_vendor.vendor_image_link %}
+                        <img src="{{ material_vendor.vendor_image_link }}" alt="Vendor Image" width="100px">
+                        {% endif %}
+
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -66,5 +86,12 @@
 
     <input type="submit" value="Save Bid" />
 </form>
+
+<!-- <div class="col-md-2 d-flex align-items-center">
+    <div class="add_material_modal" class="modal">
+        <small>Can't Find What You're Looking For?</small><br>
+        {% include 'materials/add_material.html' %}
+    </div>
+</div> -->
 
 {% endblock %}

@@ -127,3 +127,120 @@ class MaterialVendor(models.Model):
         self.vendor_part_number = self.vendor_part_number.lower()
         self.vendor_unit_of_measure = self.vendor_unit_of_measure.lower()
         super(MaterialVendor, self).save(*args, **kwargs)
+
+
+class MaterialOrder(models.Model):
+    material_order_id = models.AutoField(
+        primary_key=True,
+        verbose_name='Material Order ID',
+        db_column='material_order_id',
+        editable=False,
+    )
+    material_order_date = models.DateField(
+        verbose_name='Material Order Date',
+        db_column='material_order_date',
+    )
+    material_order_vendor = models.ForeignKey(
+        Vendor,
+        verbose_name='Material Order Vendor',
+        db_column='material_order_vendor',
+        related_name='material_order_vendor',
+        on_delete=models.CASCADE,
+        limit_choices_to={'vendor_type': 1},
+    )
+    material_order_total = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Material Order Total',
+        db_column='material_order_total',
+        default=0.00,
+    )
+    material_order_notes = models.TextField(
+        verbose_name='Material Order Notes',
+        db_column='material_order_notes',
+        blank=True,
+        null=True,
+    )
+    material_order_created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Material Order Created By',
+        db_column='material_order_created_by',
+        related_name='material_order_created_by',
+    )
+    material_order_last_modified = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Material Order Last Modified',
+        db_column='material_order_last_modified',
+        blank=True,
+        null=True,
+    )
+    material_order_last_modified_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Material Order Last Modified By',
+        db_column='material_order_last_modified_by',
+        related_name='material_order_last_modified_by',
+    )
+
+    class Meta:
+        db_table = 'material_orders'
+        verbose_name = 'Material Order'
+        verbose_name_plural = 'Material Orders'
+        ordering = ['material_order_date', 'material_order_vendor']
+
+    def __str__(self):
+        return f'{self.material_order_vendor} | {self.material_order_date}'
+
+    def save(self, *args, **kwargs):
+        super(MaterialOrder, self).save(*args, **kwargs)
+
+
+class MaterialOrderItem(models.Model):
+    order_item_id = models.AutoField(
+        primary_key=True,
+        verbose_name='Order Item ID',
+        db_column='order_item_id',
+        editable=False,
+    )
+    material_order = models.ForeignKey(
+        MaterialOrder,
+        verbose_name='Material Order',
+        db_column='material_order',
+        related_name='material_order',
+        on_delete=models.CASCADE,
+        null=True,
+    )
+    material_order_item = models.ForeignKey(
+        Material,
+        verbose_name='Order Item',
+        db_column='material_order_item',
+        related_name='material_order_item',
+        on_delete=models.CASCADE,
+    )
+    quantity = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Quantity',
+        db_column='quantity',
+    )
+    unit_of_measure = models.CharField(
+        max_length=255,
+        verbose_name='Unit of Measure',
+        db_column='unit_of_measure',
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Unit Price',
+        db_column='unit_price',
+    )
+
+    class Meta:
+        db_table = 'material_order_items'
+        verbose_name = 'Material Order Item'
+        verbose_name_plural = 'Material Order Items'
+        ordering = ['material_order_item', 'quantity', 'unit_of_measure']
+
+    def __str__(self):
+        return f'{self.material_order_item} | {self.quantity} {self.unit_of_measure}'

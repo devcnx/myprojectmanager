@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from labor.models import LaborHours
 from materials.forms import MaterialForm
-from materials.models import Material
+from materials.models import Material, MaterialVendor
 from projects.models import Project
 from travel.models import TravelHours, TravelExpense
 from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm
@@ -184,6 +184,12 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
         context['unique_manufacturers'] = self.get_unique_manufacturers()
         context['project_sites'] = self.get_project_sites()
 
+        material_vendors = MaterialVendor.objects.select_related(
+            'vendor').all()
+        context['material_vendors'] = material_vendors
+        context['price_extremes'] = self.find_material_price_extremes(
+            material_vendors)
+
         return context
 
     def get_all_materials(self):
@@ -195,3 +201,20 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
     def get_project_sites(self):
         bid = Bid.objects.get(pk=self.kwargs['pk'])
         return bid.bid_project.project_sites.all()
+
+    def find_material_price_extremes(self, material_vendors):
+        price_extremes = {}
+        for material_vendor in material_vendors:
+            material_id = material_vendor.material_id
+            if material_id not in price_extremes:
+                price_extremes[material_id] = {
+                    'min': material_vendor.vendor_unit_price,
+                    'max': material_vendor.vendor_unit_price
+                }
+            else:
+                if material_vendor.vendor_unit_price < price_extremes[material_id]['min']:
+                    price_extremes[material_id]['min'] = material_vendor.vendor_unit_price
+                if material_vendor.vendor_unit_price > price_extremes[material_id]['max']:
+                    price_extremes[material_id]['max'] = material_vendor.vendor_unit_price
+
+        return price_extremes

@@ -1,60 +1,45 @@
-// const $ = selector => document.querySelector(selector);
+document.addEventListener('DOMContentLoaded', () => {
 
-// document.addEventListener('DOMContentLoaded', () => {
+    const init = () => {
+        const materialForm = $("#material_form");
+        const descriptionInput = $("#id_description");
+        const manufacturerInput = $("#id_manufacturer");
+        const manufacturerNumber = $("#id_manufacturer_number");
+        const messageContainer = $("#messages");
 
-//     const addMaterialToSelected = (material) => {
-//         const selectedMaterials = $("#selected_materials");
-//         const option = document.createElement('option');
-//         option.value = material.material_id;
-//         option.text = material.description;
-//         selectedMaterials.add(option);
-//     };
+        // materialForm.addEventListener('submit', (event) => {
+        materialForm.on('submit', (event) => {
+            event.preventDefault();
 
+            const formData = new FormData(materialForm);
+            const url = materialForm.getAttribute('data-url')
 
+            fetch(url, {
+                method: 'POST',
+                body: formData,
 
-//     // const init = () => {
-//     //     // const materialForm = $("#add_material_form");
-//     //     const descriptionInput = $("#id_description");
-//     //     const manufacturerInput = $("#id_manufacturer");
-//     //     const manufacturerNumber = $("#id_manufacturer_number");
-//     //     const messageContainer = $("#messages");
+            })
+                .then((response) => {
+                    if (response.ok) {
+                        alert(`Material ${formData.get('description')} Added Successfully.`)
+                        return response.json()
+                    } else {
+                        throw new Error("Item Already Exists")
+                    }
+                })
+                .then((data) => {
+                    addMaterialToSelected(data);
+                })
+                .catch((error) => {
+                    alert(`Item with MFR# ${formData.get('manufacturer_number')} Already Exists.`)
+                });
+        });
+    };
 
-//     //     materialForm.addEventListener('submit', (event) => {
-//     //         event.preventDefault();
+    init();
 
-//     //         const formData = new FormData(materialForm);
-//     //         const url = materialForm.getAttribute('data-url')
+});
 
-//     //         fetch(url, {
-//     //             method: 'POST',
-//     //             body: formData,
-
-//     //         })
-//     //             .then((response) => {
-//     //                 if (response.ok) {
-//     //                     alert(`Material ${formData.get('description')} Added Successfully.`)
-//     //                     return response.json()
-//     //                 } else {
-//     //                     throw new Error("Item Already Exists")
-//     //                 }
-//     //             })
-//     //             .then((data) => {
-//     //                 addMaterialToSelected(data);
-//     //             })
-//     //             .catch((error) => {
-//     //                 alert(`Item with MFR# ${formData.get('manufacturer_number')} Already Exists.`)
-//     //             });
-//     //     });
-//     // };
-
-//     init();
-
-// });
-
-
-// const $ = selector => document.querySelector(selector);
-
-// document.addEventListener('DOMContentLoaded', () => {
 $(document).ready(function () {
     const init = () => {
         // This applies Select2 to the manufacturer dropdown
@@ -81,6 +66,16 @@ $(document).ready(function () {
         }
 
         $('#manufacturer_select, #search_input').on('change input', filterMaterials);
+
+        // Toggle the quantity input visibility
+        $(".material_checkbox").on("change", function () {
+            var quantityInput = $(this).closest('.material_item').find("input[name^='quantity']");
+            if ($(this).is(":checked")) {
+                quantityInput.show();
+            } else {
+                quantityInput.hide();
+            }
+        })
 
     };
 

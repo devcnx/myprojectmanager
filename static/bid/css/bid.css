@@ -16,3 +16,11 @@
     border: 1px solid #ccc;
     padding: 10px;
 }
+
+.least_expensive {
+    color: green;
+}
+
+.most_expensive {
+    color: red;
+}
