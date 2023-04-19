@@ -277,3 +277,115 @@ class WorkOrderTrip(models.Model):
             self.trip_number = existing_trips + 1
         user = kwargs.pop('user', None)
         super(WorkOrderTrip, self).save(*args, **kwargs)
+
+
+class WorkOrderPurchaseOrder(models.Model):
+    wo_po_id = models.AutoField(
+        primary_key=True,
+        editable=False,
+        verbose_name='Work Order Purchase Order ID',
+        db_column='wo_po_id',
+    )
+    work_order = models.ForeignKey(
+        WorkOrder,
+        on_delete=models.CASCADE,
+        verbose_name='Work Order',
+        db_column='work_order',
+    )
+    purchase_order_number = models.CharField(
+        max_length=50,
+        verbose_name='Purchase Order Number',
+        db_column='purchase_order_number',
+        null=True,
+        blank=True,
+    )
+    PURCHASE_ORDER_TYPE_CHOICES = (
+        ('Material', 'Material'),
+        ('Equipment', 'Equipment'),
+    )
+    purchase_order_type = models.CharField(
+        max_length=50,
+        choices=PURCHASE_ORDER_TYPE_CHOICES,
+        verbose_name='Purchase Order Type',
+        db_column='purchase_order_type',
+        default='Material',
+    )
+    purchase_order_date = models.DateField(
+        verbose_name='Purchase Order Date',
+        db_column='purchase_order_date',
+        blank=True,
+        null=True,
+    )
+    purchase_order_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Purchase Order Amount',
+        db_column='purchase_order_amount',
+        default=0.00,
+    )
+    purchase_order_notes = models.ManyToManyField(
+        Note,
+        verbose_name='Purchase Order Notes',
+        db_column='purchase_order_notes',
+        blank=True,
+        related_name='purchase_order_note',
+    )
+    created_on = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Created On',
+        db_column='created_on',
+    )
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Created By',
+        db_column='created_by',
+        related_name='purchase_order_created_by',
+        blank=True,
+        null=True,
+    )
+    updated_on = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Updated On',
+        db_column='updated_on',
+    )
+    updated_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Updated By',
+        db_column='updated_by',
+        related_name='purchase_order_updated_by',
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        db_table = 'work_order_purchase_orders'
+        verbose_name = 'Work Order Purchase Order'
+        verbose_name_plural = 'Work Order Purchase Orders'
+        ordering = ['-purchase_order_date']
+
+    def __str__(self):
+        return str(self.purchase_order_number)
+
+    def save(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        if not self.created_by:
+            self.created_by = user
+        if not self.updated_by:
+            self.updated_by = user
+        if not self.purchase_order_date:
+            self.purchase_order_date = datetime.now().date()
+        if not self.pk:
+            year = datetime.now().year
+            month = datetime.now().month
+            day = datetime.now().day
+            count = WorkOrderPurchaseOrder.objects.filter(
+                work_order=self.work_order,
+                purchase_order_date__year=year,
+                purchase_order_date__month=month).count()
+            po_prefix = 'M' if self.purchase_order_type == 'Material' else 'E'
+            work_order_number = self.work_order.work_order_number
+            modified_year = str(year)[2:]
+            self.purchase_order_number = f'{po_prefix}{work_order_number.replace("WO ", "").replace("-", "")}({month:02d}{day:02d}{modified_year})-{count + 1:03d}'
+        super(WorkOrderPurchaseOrder, self).save(*args, **kwargs)

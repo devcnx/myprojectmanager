@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .forms import WorkOrderForm, WorkOrderTripForm
-from .models import WorkOrder, WorkOrderTrip
+from .models import WorkOrder, WorkOrderTrip, WorkOrderPurchaseOrder
 
 
 class WorkOrderAdmin(admin.ModelAdmin):
@@ -50,3 +50,19 @@ class WorkOrderTripAdmin(admin.ModelAdmin):
 
 
 admin.site.register(WorkOrderTrip, WorkOrderTripAdmin)
+
+
+class WorkOrderPurchaseOrderAdmin(admin.ModelAdmin):
+    ordering = ('wo_po_id',)
+    readonly_fields = ('purchase_order_number', 'created_by', 'updated_by')
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        obj.work_order = WorkOrder.objects.get(pk=obj.work_order_id)
+        obj.save(user=request.user)
+        super().save_model(request, obj, form, change)
+
+
+admin.site.register(WorkOrderPurchaseOrder, WorkOrderPurchaseOrderAdmin)

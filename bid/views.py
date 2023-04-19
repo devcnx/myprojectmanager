@@ -179,7 +179,7 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
         context['bid'] = bid
-        context['bid_materials'] = bid.bid_materials.all()
+        # context['bid_materials'] = bid.bid_materials.all()
         context['all_materials'] = self.get_all_materials()
         context['unique_manufacturers'] = self.get_unique_manufacturers()
         context['project_sites'] = self.get_project_sites()
