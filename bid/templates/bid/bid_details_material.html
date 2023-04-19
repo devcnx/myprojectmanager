@@ -28,6 +28,9 @@
 </small>
 {% endfor %}
 
+<!-- Add a way for the user to navigate to the previous page (bid/bid_details.html) -->
+<a href="{% url 'bid:bid_details' bid.bid_id %}">Back to Labor / Travel</a>
+
 <form method="post">
     {% csrf_token %}
 

@@ -5,9 +5,47 @@ from django.db.models.signals import post_save
 from django.utils import timezone
 from equipment.models import Equipment
 from labor.models import LaborHours
-from materials.models import MaterialOrder
+from materials.models import Material
 from projects.models import Project
 from travel.models import TravelHours, TravelExpense
+
+
+class BidMaterial(models.Model):
+    material = models.ForeignKey(
+        Material,
+        on_delete=models.CASCADE,
+        verbose_name='Bid Material',
+        db_column='bid_material',
+    )
+    quantity = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Bid Material Quantity',
+        db_column='bid_material_quantity',
+        default=0.00,
+    )
+    unit_of_measure = models.CharField(
+        max_length=50,
+        verbose_name='Bid Material Unit of Measure',
+        db_column='bid_material_unit_of_measure',
+        default='EA',
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Bid Material Unit Price',
+        db_column='bid_material_unit_price',
+        default=0.00,
+    )
+
+    class Meta:
+        db_table = 'bid_materials'
+        verbose_name = 'Bid Material'
+        verbose_name_plural = 'Bid Materials'
+        ordering = ['material']
+
+    def __str__(self):
+        return str(self.material)
 
 
 class Bid(models.Model):
@@ -98,16 +136,10 @@ class Bid(models.Model):
         db_column='bid_travel_expenses',
         blank=True,
     )
-    # bid_materials = models.ManyToManyField(
-    #     Material,
-    #     verbose_name='Bid Materials',
-    #     db_column='bid_materials',
-    #     blank=True,
-    # )
-    bid_material_orders = models.ManyToManyField(
-        MaterialOrder,
-        verbose_name='Bid Material Orders',
-        db_column='bid_material_orders',
+    bid_materials = models.ManyToManyField(
+        BidMaterial,
+        verbose_name='Bid Materials',
+        db_column='bid_materials',
         blank=True,
     )
     bid_equipment = models.ManyToManyField(

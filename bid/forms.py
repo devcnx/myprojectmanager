@@ -1,10 +1,9 @@
 from django import forms
 from django.forms import formset_factory
 from labor.models import LaborHours
-from materials.models import Material
 from rates.models import Rate
 from travel.models import TravelHours, TravelExpense
-from .models import Bid
+from .models import Bid, BidMaterial
 
 
 class AdminBidForm(forms.ModelForm):
@@ -19,7 +18,7 @@ class BidForm(forms.ModelForm):
         model = Bid
         fields = '__all__'
         exclude = ('bid_labor_hours', 'bid_travel_hours',
-                   'bid_travel_expenses', 'bid_materials', 'bid_equipment',
+                   'bid_travel_expenses', 'bid_equipment',
                    'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
 
 
