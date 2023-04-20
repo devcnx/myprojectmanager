@@ -13,7 +13,7 @@ class BidAdmin(admin.ModelAdmin):
                    'created_by', 'last_updated_on', 'last_updated_by')
     ordering = ('-created_on',)
     filter_horizontal = ('bid_labor_hours', 'bid_travel_hours',
-                         'bid_travel_expenses', 'bid_materials', 'bid_equipment')
+                         'bid_travel_expenses', 'bid_equipment')
     readonly_fields = ('created_on', 'created_by',
                        'last_updated_on', 'last_updated_by')
     fieldsets = (
@@ -48,4 +48,17 @@ class BidAdmin(admin.ModelAdmin):
 admin.site.register(Bid, BidAdmin)
 
 
-admin.site.register(BidMaterial)
+class BidMaterialAdmin(admin.ModelAdmin):
+    list_display = ('id', 'material', 'quantity')
+    search_fields = ('material', 'quantity')
+    list_filter = ('material', 'quantity')
+    ordering = ('id',)
+    readonly_fields = ('id',)
+    fieldsets = (
+        ('Bid Material Information', {
+            'fields': ('material', 'quantity', 'unit_of_measure', 'unit_price')
+        }),
+    )
+
+
+admin.site.register(BidMaterial, BidMaterialAdmin)

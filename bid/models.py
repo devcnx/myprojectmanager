@@ -42,7 +42,7 @@ class BidMaterial(models.Model):
         db_table = 'bid_materials'
         verbose_name = 'Bid Material'
         verbose_name_plural = 'Bid Materials'
-        ordering = ['material']
+        ordering = ['id']
 
     def __str__(self):
         return str(self.material)

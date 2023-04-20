@@ -9,4 +9,8 @@ urlpatterns = [
          views.BidDetailView.as_view(), name='bid_details'),
     path('bid_materials/<int:pk>/',
          views.BidDetailsMaterialView.as_view(), name='bid_details_material'),
+    path('bid_equipment/<int:pk>/', views.BidDetailsEquipmentView.as_view(),
+         name='bid_details_equipment'),
+    path('bid_materials/delete/<int:bid_id>/<int:material_id>/',
+         views.delete_bid_material, name='delete_bid_material'),
 ]

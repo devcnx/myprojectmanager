@@ -18,7 +18,7 @@ class BidForm(forms.ModelForm):
         model = Bid
         fields = '__all__'
         exclude = ('bid_labor_hours', 'bid_travel_hours',
-                   'bid_travel_expenses', 'bid_equipment',
+                   'bid_travel_expenses', 'bid_materials', 'bid_equipment',
                    'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
 
 
@@ -91,3 +91,9 @@ class BidTravelExpenseForm(forms.Form):
 
 BidTravelExpenseFormSet = formset_factory(
     BidTravelExpenseForm, extra=0, formset=forms.BaseFormSet, min_num=0)
+
+
+class BidMaterialForm(forms.ModelForm):
+    class Meta:
+        model = BidMaterial
+        fields = '__all__'

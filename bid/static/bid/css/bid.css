@@ -1,26 +1,55 @@
 @charset "utf-8";
 
 
-.bid_item {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    padding: 10px 20px;
-    border-bottom: 1px solid #ddd;
-}
-
 .scrollable {
+    height: 300px;
     max-height: 300px;
+    width: 40%;
+    max-width: 40%;
     overflow-y: auto;
     border: 1px solid #ccc;
     padding: 10px;
 }
 
-.least_expensive {
-    color: green;
+.filter_container {
+    width: 100%;
 }
 
-.most_expensive {
-    color: red;
+#material_form {
+    border: 1px solid red;
+    width: 100%;
+}
+
+
+#material_list {
+    border: 1px solid orange;
+    width: 100% !important;
+
+}
+
+.scrollable_table {
+    height: 300px;
+    max-height: 300px;
+    width: 100%;
+    max-width: 100%;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#available_materials_table {
+    /* border: 1px solid yellow; */
+    width: 100%;
+    text-align: left;
+}
+
+#bid_materials_list {
+    border: 1px solid green;
+    width: 100%;
+}
+
+#bid_materials_summary_table {
+    border: 1px solid blue;
+    width: 100%;
+    text-align: left;
 }

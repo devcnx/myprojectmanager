@@ -1,16 +1,23 @@
+import json
+from bid.templatetags.bid_tags import get_material_description, get_manufacturer, get_manufacturer_number, format_unit_of_measure, get_total_price
 from datetime import datetime
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
+
 from labor.models import LaborHours
 from materials.forms import MaterialForm
 from materials.models import Material, MaterialVendor
+from myprojectmanager.custom_json_encoder import CustomJSONEncoder
 from projects.models import Project
 from travel.models import TravelHours, TravelExpense
-from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm
-from .models import Bid
+from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm, BidMaterialForm
+from .models import Bid, BidMaterial
 
 
 class IndexView(LoginRequiredMixin, TemplateView):
@@ -47,6 +54,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
         context['user'] = self.request.user
         context['bid'] = self.get_bid()
         context['bid_form'] = BidForm(instance=self.get_bid())
+        context['bid_material_form'] = BidMaterialForm()
 
         labor_hours_initial = [
             {
@@ -82,6 +90,8 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
         ]
         context['travel_expense_formset'] = BidTravelExpenseFormSet(
             prefix='travel_expense', initial=travel_expense_initial)
+
+        context['bid_materials'] = self.get_bid().bid_materials.all()
 
         return context
 
@@ -163,6 +173,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
         else:
             context = self.get_context_data()
             context['bid_form'] = bid_form
+            context['bid_material_form'] = BidMaterialForm
             context['labor_hours_formset'] = labor_hours_formset
             context['travel_hours_formset'] = travel_hours_formset
             context['travel_expense_formset'] = travel_expense_formset
@@ -176,10 +187,16 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
         # Get the bid from the args passed from the bid detail view.
         # This is the bid that we are editing.
         bid = Bid.objects.get(pk=self.kwargs['pk'])
-
         context = super().get_context_data(**kwargs)
         context['bid'] = bid
-        # context['bid_materials'] = bid.bid_materials.all()
+        bid_materials = bid.bid_materials.all()
+        if bid_materials:
+            context['bid_materials'] = bid_materials
+        else:
+            context['bid_materials'] = None
+
+        context['bid_material_form'] = BidMaterialForm
+
         context['all_materials'] = self.get_all_materials()
         context['unique_manufacturers'] = self.get_unique_manufacturers()
         context['project_sites'] = self.get_project_sites()
@@ -189,6 +206,22 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
         context['material_vendors'] = material_vendors
         context['price_extremes'] = self.find_material_price_extremes(
             material_vendors)
+        context['bid_materials'] = self.get_bid_materials_data(bid)
+        context['bid_materials_data_json'] = json.dumps(
+            context['bid_materials'], cls=CustomJSONEncoder)
+
+        # Get the UOMs for each bid material if it exists
+        bid_material_uoms = {}
+        for bid_material in bid_materials:
+            bid_material_uoms[bid_material.material.material_id] = bid_material.unit_of_measure
+
+        context['bid_material_uoms'] = bid_material_uoms
+
+        bid_material_unit_prices = {}
+        for bid_material in bid_materials:
+            bid_material_unit_prices[bid_material.material.material_id] = bid_material.unit_price
+
+        context['bid_material_unit_prices'] = bid_material_unit_prices
 
         return context
 
@@ -208,13 +241,98 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
             material_id = material_vendor.material_id
             if material_id not in price_extremes:
                 price_extremes[material_id] = {
-                    'min': material_vendor.vendor_unit_price,
-                    'max': material_vendor.vendor_unit_price
+                    'min': float(material_vendor.vendor_unit_price),
+                    'max': float(material_vendor.vendor_unit_price)
                 }
             else:
                 if material_vendor.vendor_unit_price < price_extremes[material_id]['min']:
-                    price_extremes[material_id]['min'] = material_vendor.vendor_unit_price
+                    price_extremes[material_id]['min'] = float(
+                        material_vendor.vendor_unit_price)
                 if material_vendor.vendor_unit_price > price_extremes[material_id]['max']:
-                    price_extremes[material_id]['max'] = material_vendor.vendor_unit_price
+                    price_extremes[material_id]['max'] = float(
+                        material_vendor.vendor_unit_price)
 
         return price_extremes
+
+    def get_bid_materials_data(self, bid):
+        bid_materials = bid.bid_materials.all()
+        bid_materials_data = []
+        for bid_material in bid_materials:
+            bid_materials_data.append({
+                'material_id': bid_material.material.material_id,
+                'quantity': bid_material.quantity,
+                'unit_of_measure': bid_material.unit_of_measure,
+                'unit_price': bid_material.unit_price,
+            })
+        return bid_materials_data
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        print(request.body)
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+
+        # Parse the bid materials data from the request body.
+        bid_materials_data = json.loads(request.body)
+
+        # Save the bid materials data to the database.
+        for bid_material_data in bid_materials_data:
+            material = Material.objects.get(
+                material_id=bid_material_data['material_id'])
+            quantity = bid_material_data['quantity']
+            unit_of_measure = bid_material_data.get('unit_of_measure', None)
+            unit_price = bid_material_data.get('unit_price', None)
+
+            # Check if there's already a BidMaterial instance.
+            bid_material, created = BidMaterial.objects.get_or_create(
+                material=material, bid=bid, defaults={
+                    'quantity': quantity,
+                    'unit_of_measure': unit_of_measure,
+                    'unit_price': unit_price
+                })
+
+            # If the BidMaterial instance already exists, update the quantity.
+            if not created:
+                bid_material.quantity = quantity
+                bid_material.unit_of_measure = unit_of_measure
+                bid_material.save()
+
+            # If the BidMaterial instance doesn't exist, create it.
+            else:
+                bid_material.save()
+                bid.bid_materials.add(bid_material)
+
+            bid.save()
+
+        return JsonResponse({
+            'status': 'success',
+            'redirect_url': reverse('bid:bid_details_material', args=[bid.pk])
+        })
+
+
+def delete_bid_material(request, bid_id, material_id):
+    bid = get_object_or_404(Bid, pk=bid_id)
+    material = get_object_or_404(Material, pk=material_id)
+
+    # Find the BidMaterial object associated with the bid and material.
+    bid_material = get_object_or_404(BidMaterial, bid=bid, material=material)
+
+    # Remove the BidMaterial object.
+    bid.bid_materials.remove(bid_material)
+    bid.save()
+
+    bid_material.delete()
+
+    return redirect('bid:bid_details_material', pk=bid_id)
+
+
+class BidDetailsEquipmentView(LoginRequiredMixin, TemplateView):
+    template_name = 'bid/bid_details_equipment.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bid'] = Bid.objects.get(pk=self.kwargs['pk'])
+
+        return context
