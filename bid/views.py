@@ -3,24 +3,26 @@ from bid.templatetags.bid_tags import get_material_description, get_manufacturer
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count, Case, When, IntegerField
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
+from equipment.models import Equipment
 from labor.models import LaborHours
 from materials.forms import MaterialForm
 from materials.models import Material, MaterialVendor
 from myprojectmanager.custom_json_encoder import CustomJSONEncoder
 from projects.models import Project
 from travel.models import TravelHours, TravelExpense
-from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm, BidMaterialForm
-from .models import Bid, BidMaterial
+from .forms import BidForm, BidLaborHoursFormSet, BidLaborHoursForm, BidTravelHoursFormSet, BidTravelHoursForm, BidTravelExpenseFormSet, BidTravelExpenseForm, BidMaterialForm, BidEquipmentForm, BidEquipmentFormSet
+from .models import Bid, BidMaterial, BidEquipment
 
 
-class IndexView(LoginRequiredMixin, TemplateView):
+class IndexView(LoginRequiredMixin, ListView):
     template_name = 'bid/index.html'
 
     def get_context_data(self, **kwargs):
@@ -169,7 +171,7 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
                     bid.bid_travel_expenses.add(travel_expense)
 
             bid.save()
-            return HttpResponseRedirect(reverse('bid:bid_details_material', args=[bid.pk]))
+            return HttpResponseRedirect(reverse('bid:bid_details', args=[bid.pk]))
         else:
             context = self.get_context_data()
             context['bid_form'] = bid_form
@@ -223,6 +225,9 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
 
         context['bid_material_unit_prices'] = bid_material_unit_prices
 
+        # add_material_form = MaterialForm()
+        # context['add_material_form'] = add_material_form
+
         return context
 
     def get_all_materials(self):
@@ -271,7 +276,6 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
         return super().dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        print(request.body)
         bid = Bid.objects.get(pk=self.kwargs['pk'])
 
         # Parse the bid materials data from the request body.
@@ -282,7 +286,8 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
             material = Material.objects.get(
                 material_id=bid_material_data['material_id'])
             quantity = bid_material_data['quantity']
-            unit_of_measure = bid_material_data.get('unit_of_measure', None)
+            unit_of_measure = bid_material_data.get(
+                'unit_of_measure', None)
             unit_price = bid_material_data.get('unit_price', None)
 
             # Check if there's already a BidMaterial instance.
@@ -329,10 +334,107 @@ def delete_bid_material(request, bid_id, material_id):
 
 
 class BidDetailsEquipmentView(LoginRequiredMixin, TemplateView):
+    model = Bid, BidEquipment, Equipment
     template_name = 'bid/bid_details_equipment.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        context['bid'] = Bid.objects.get(pk=self.kwargs['pk'])
+        context['bid_form'] = BidForm(instance=context['bid'])
+        context['bid_equipment_form'] = BidEquipmentForm()
+        context['bid_equipment_formset'] = BidEquipmentFormSet(
+            prefix='bid_equipment')
+
+        bid_equipment_initial = [
+            {
+                'id': be.id,
+                'equipment': be.equipment.equipment_id,
+                'quantity': be.quantity,
+                'unit_price': be.unit_price,
+                'start_date': be.start_date,
+                'start_time': be.start_time,
+                'end_date': be.end_date,
+                'end_time': be.end_time,
+            } for be in context['bid'].bid_equipment.all()
+        ]
+
+        context['bid_equipment_formset'] = BidEquipmentFormSet(
+            prefix='bid_equipment', initial=bid_equipment_initial)
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+        bid_form = BidForm(request.POST, instance=bid)
+        bid_equipment_formset = BidEquipmentFormSet(
+            request.POST, prefix='bid_equipment')
+
+        if bid_form.is_valid() and bid_equipment_formset.is_valid():
+            bid_form.instance = bid
+            bid_form.instance.last_updated_by = request.user
+            bid_form.save()
+
+            for form in bid_equipment_formset:
+                bid_equipment = form.save(commit=False)
+                bid_equipment.bid = bid
+                bid_equipment.save()
+                id = bid_equipment_data.get('id', None)
+                if id:
+                    bid_equipment = BidEquipment.objects.get(pk=id)
+                    if bid_equipment_data.get('can_delete'):
+                        bid.bid_equipment.remove(bid_equipment)
+                        bid_equipment.delete()
+                        continue
+                else:
+                    bid_equipment = BidEquipment()
+
+                bid_equipment.bid = bid
+                bid_equipment.equipment = bid_equipment_data.get('equipment')
+                bid_equipment.quantity = bid_equipment_data.get('quantity')
+                bid_equipment.unit_price = bid_equipment_data.get('unit_price')
+                bid_equipment.start_date = bid_equipment_data.get('start_date')
+                bid_equipment.start_time = bid_equipment_data.get('start_time')
+                bid_equipment.end_date = bid_equipment_data.get('end_date')
+                bid_equipment.end_time = bid_equipment_data.get('end_time')
+                bid_equipment.save()
+
+                bid.bid_equipment.add(bid_equipment)
+            bid.save()
+
+            return redirect('bid:bid_details_equipment', pk=bid.pk)
+
+        else:
+            return render(request, self.template_name, {
+                'bid': bid,
+                'bid_equipment_form': bid_equipment_formset,
+                'bid_equipment_formset': bid_equipment_formset,
+            })
+
+
+class BidSummaryView(LoginRequiredMixin, TemplateView):
+    template_name = 'bid/bid_summary.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
         context['bid'] = Bid.objects.get(pk=self.kwargs['pk'])
 
         return context
+
+    def post(self, request, *args, **kwargs):
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+        bid_form = BidForm(request.POST, instance=bid)
+
+        if bid_form.is_valid():
+            bid_form.instance = bid
+            bid_form.instance.last_updated_by = request.user
+            bid_form.save()
+
+            return redirect('bid:bid_summary', pk=bid.pk)
+
+        else:
+            return render(request, self.template_name, {
+                'bid': bid,
+                'bid_form': bid_form,
+            })

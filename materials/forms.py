@@ -1,5 +1,5 @@
 from django import forms
-from .models import Material
+from .models import Material, MaterialVendor
 
 
 class MaterialForm(forms.ModelForm):
@@ -8,7 +8,6 @@ class MaterialForm(forms.ModelForm):
         exclude = ('created_on', 'created_by',
                    'last_updated_on', 'last_updated_by')
         widgets = {
-            'material_id': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'description': forms.TextInput(attrs={'class': 'form-control'}),
             'manufacturer': forms.TextInput(attrs={'class': 'form-control'}),
             'manufacturer_number': forms.TextInput(attrs={'class': 'form-control'}),

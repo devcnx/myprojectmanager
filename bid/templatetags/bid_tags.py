@@ -55,9 +55,11 @@ def get_total_price(bid_material):
 @register.filter
 def get_image_url(material, material_vendors):
     for material_vendor in material_vendors:
-        if material_vendor.material.material_id == material.material_id:
-            if material_vendor.vendor_image_link and material_vendor.vendor_image_link != 'NULL':
-                return material_vendor.vendor_image_link
+        if material_vendor.vendor.vendor_name == 'graybar':
+            if material_vendor.material.manufacturer_number.upper() == material.manufacturer_number.upper():
+                image_url = material_vendor.vendor_image_link
+                if image_url and image_url.lower() not in {'none', 'n/a', 'na', 'null'}:
+                    return image_url
     return None
 
 
@@ -68,7 +70,8 @@ def get_vendor_price(material, material_vendors):
         if material_vendor.material.material_id == material.material_id:
             vendor_data = {
                 'price': material_vendor.vendor_unit_price,
-                'unit_of_measure': material_vendor.vendor_unit_of_measure
+                'unit_of_measure': material_vendor.vendor_unit_of_measure,
+                'product_link': material_vendor.vendor_product_link,
             }
             if material_vendor.vendor.vendor_name == 'anixter/wesco':
                 vendor_prices['anixter'] = vendor_data

@@ -3,9 +3,6 @@ from django.urls import reverse
 
 
 class NonSuperuserLoginMiddleware:
-    """
-    Redirect non-superusers to the main app's index page upon successful login.
-    """
 
     def __init__(self, get_response):
         self.get_response = get_response

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .forms import AdminBidForm
-from .models import Bid, BidMaterial
+from .models import Bid, BidMaterial, BidEquipment
 
 
 class BidAdmin(admin.ModelAdmin):
@@ -62,3 +62,19 @@ class BidMaterialAdmin(admin.ModelAdmin):
 
 
 admin.site.register(BidMaterial, BidMaterialAdmin)
+
+
+class BidEquipmentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'equipment', 'quantity')
+    search_fields = ('equipment', 'quantity')
+    list_filter = ('equipment', 'quantity')
+    ordering = ('id',)
+    readonly_fields = ('id',)
+    fieldsets = (
+        ('Bid Equipment Information', {
+            'fields': ('equipment', 'quantity', 'unit_price')
+        }),
+    )
+
+
+admin.site.register(BidEquipment, BidEquipmentAdmin)

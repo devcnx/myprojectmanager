@@ -9,26 +9,28 @@
 {% block content %}
 
 <h3>Generated Bids</h3>
-{% for bid in bids_generated %}
 <div class="bid">
-    <div class="bid_header">
-        <a href="{% url 'bid:bid_details' bid.pk %}">
-            <h4>
-                {{ bid.bid_project.project_number }}
-            </h4>
-        </a>
-        <h4>Project : {{ bid.bid_project.project_name }}</h4>
-    </div>
-    <div class="bid_body">
-        <div class="bid_body_left">
-            <p><b>Bid Type : </b>{{ bid.bid_type }}</p>
-            <p><b>Status : </b>{{ bid.bid_status }}</p>
-            <p><b>Site Count: </b> ({{ bid.bid_project.project_sites.count }})</p>
-            {% if bid.bid_due_date and bid.bid_due_time %}
-            <p><b>Due : </b>{{ bid.bid_due_date }} at {{ bid.bid_due_time|date:"g:i A" }}</p>
-            {% endif %}
+    {% for bid in bids_generated %}
+    <div class="bid_details">
+        <div class="bid_header">
+            <a href="{% url 'bid:bid_details' bid.pk %}">
+                <h4>
+                    {{ bid.bid_project.project_number }}
+                </h4>
+            </a>
+            <h4>Project : {{ bid.bid_project.project_name }}</h4>
+        </div>
+        <div class="bid_body">
+            <div class="bid_body_left">
+                <p><b>Bid Type : </b>{{ bid.bid_type }}</p>
+                <p><b>Status : </b>{{ bid.bid_status }}</p>
+                <p><b>Site Count: </b> ({{ bid.bid_project.project_sites.count }})</p>
+                {% if bid.bid_due_date and bid.bid_due_time %}
+                <p><b>Due : </b>{{ bid.bid_due_date }} at {{ bid.bid_due_time|date:"g:i A" }}</p>
+                {% endif %}
+            </div>
         </div>
     </div><br>
+    {% endfor %}
 </div>
-{% endfor %}
 {% endblock %}

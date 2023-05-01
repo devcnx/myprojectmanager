@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from vendors.models import Vendor
@@ -24,13 +25,14 @@ class Material(models.Model):
         max_length=255,
         verbose_name='Manufacturer Number',
         db_column='manufacturer_number',
+        unique=True,
     )
 
     class Meta:
         db_table = 'materials'
         verbose_name = 'Material'
         verbose_name_plural = 'Materials'
-        ordering = ['manufacturer', 'description']
+        ordering = ['description', 'manufacturer']
 
     def __str__(self):
         return f'{self.description} | {self.manufacturer}'
@@ -62,6 +64,7 @@ class MaterialVendor(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Vendor',
         db_column='vendor_id',
+        limit_choices_to={'vendor_type': 1},
     )
     vendor_description = models.CharField(
         max_length=255,
@@ -110,6 +113,9 @@ class MaterialVendor(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Last Modified By',
         db_column='last_modified_by',
+        related_name='last_modified_by',
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -117,15 +123,14 @@ class MaterialVendor(models.Model):
         verbose_name = 'Material Vendor'
         verbose_name_plural = 'Material Vendors'
         ordering = ['vendor', 'material']
-        unique_together = ('material', 'vendor')
+        # unique_together = ('material', 'vendor')
 
     def __str__(self):
         return f'{self.vendor} | {self.material}'
 
     def save(self, *args, **kwargs):
-        self.vendor_description = self.vendor_description.lower()
-        self.vendor_part_number = self.vendor_part_number.lower()
-        self.vendor_unit_of_measure = self.vendor_unit_of_measure.lower()
+        self.last_modified = datetime.now()
+        self.last_modified_by = User.objects.get(username='automations')
         super(MaterialVendor, self).save(*args, **kwargs)
 
 

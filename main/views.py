@@ -1,3 +1,7 @@
+""" 
+Views for the main app. 
+"""
+
 from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect

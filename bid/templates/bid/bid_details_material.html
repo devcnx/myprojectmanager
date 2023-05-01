@@ -16,143 +16,152 @@
 {% endblock %}
 {% block content %}
 
-<h1>Material for {{ bid.bid_project.project_name }}</h1>
+<div class="bid_container">
 
-<!-- Add a way for the user to navigate to the previous page (bid/bid_details.html) -->
-<a href="{% url 'bid:bid_details' bid.bid_id %}">Back to Labor / Travel</a>
-
-<p>
-    Site Count : ({{ bid.bid_project.project_sites.count }})
-</p>
-{% for site in bid.bid_project.project_sites.all %}
-<small>
-    {{ site.site_id }} {{ site.site_name }}<br>
-    {{ site.address }},
-    {{ site.city }} {{ site.state }} {{ site.zip_code }}
-    {% if site.phone %}
-    <br>Phone: ({{ site.phone|slice:":3" }}) {{ site.phone|slice:"3:6" }}-{{ site.phone|slice:"6:10" }}
-    {% endif %}
-</small>
-{% endfor %}
-
-<div class="filter_container">
-    <!-- Filter by Manufacturer -->
-    <label for="manufacturer_select">Manufacturer : </label>
-    <select id="manufacturer_select" name="manufacturer_select">
-        <option value="All">All</option>
-        {% for manufacturer in unique_manufacturers %}
-        <option value="{{ manufacturer }}">{{ manufacturer }}</option>
-        {% endfor %}
-    </select>
-
-    <!-- Search -->
-    <label for="search_input">Search : </label>
-    <input type="text" id="search_input" name="search" placeholder="Search by Manufacturer or Description">
-</div><br>
-
-
-<!-- <h2>Select Materials to Bid</h2> -->
-<form method="post" id="material_form" data-url="{% url 'bid:bid_details_material' bid.pk %}">
-    {% csrf_token %}
-
-    <!-- List of Materials -->
-    <!-- <div id="material_list" class="scrollable" style="height: 500px; overflow-y: scroll;"> -->
-    <div id="material_list" class="scrollable_table">
-
-        <table id="available_materials_table">
-            <thead>
-                <tr>
-                    <th>Selected</th>
-                    <th> &nbsp; </th>
-                    <th>Description</th>
-                    <th>MFR</th>
-                    <th>MFR #</th>
-                    <th>Image</th>
-                    <th>Graybar</th>
-                    <th>Anixter/WESCO</th>
-                    <th>Rexel</th>
-
-            </thead>
-            <tbody id="materials_table_body">
-                {% for material in all_materials %}
-                <tr class="material_item searchable" data-material-id="{{ material.material_id }}"
-                    data-material-manufacturer="{{ material.manufacturer }}"
-                    data-material-description="{{ material.description }}">
-                    <td>
-                        <input type="checkbox" class="material_checkbox" name="material_{{ material.material_id }}"
-                            value="{{ material.material_id }}">
-                    </td>
-                    <td>
-                        <input type="number" class="item_quantity_input" name="item_quantity_{{ material.material_id }}"
-                            placeholder="# of Line Items" style="display:none;" />
-                    </td>
-                    <td>{{ material.description }}</td>
-                    <td>{{ material.manufacturer }}</td>
-                    <td>{{ material.manufacturer_number }}</td>
-
-                    <td>
-                        {% with image_url=material|get_image_url:material_vendors %}
-                        {% if image_url %}
-                        <img src="{{ image_url }}" alt="Vendor Image" style="width:100px;">
-                        {% else %}
-                        <img src="{% static 'materials/img/no_image_avail.png' %}" alt="No Image Available"
-                            style="width:100px;">
-                        {% endif %}
-                        {% endwith %}
-                    </td>
-
-                    {% with vendor_prices=material|get_vendor_price:material_vendors %}
-                    <td>
-                        {% if vendor_prices.graybar %}
-                        ${{ vendor_prices.graybar.price }} ({{ vendor_prices.graybar.unit_of_measure }})
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if vendor_prices.anixter %}
-                        ${{ vendor_prices.anixter.price }} ({{ vendor_prices.anixter.unit_of_measure }})
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if vendor_prices.rexel %}
-                        ${{ vendor_prices.rexel.price }} ({{ vendor_prices.rexel.unit_of_measure }})
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                    {% endwith %}
-
-
-
-
-
-
-
-                </tr>
-                {% endfor %}
-            </tbody>
-
-        </table>
-
-    </div>
-    <br>
-
-
-
-
-
-    <!-- Button to Add Selected Materials to Bid Materials List -->
-    <button type="button" id="add_selected_materials">Add Selected Materials</button>
-
-    <!-- <h2>Bid Materials</h2> -->
-    <div id="bid_materials_list" class="scrollable">
-
+    <div class="bid_page_header">
+        <h2>Materials</h2>
+        <small>for {{ bid.bid_project.project_name }} ({{ bid.bid_project.project_number }}) </small>
     </div>
 
-    <input type="submit" value="Save Bid" id="save_bid_materials">
+    <!-- Add a way for the user to navigate to different pages for the bid -->
+    <div class="bid_nav">
+        <a href="{% url 'bid:bid_details' bid.bid_id %}">Go to Labor / Travel</a>
+        <a href="{% url 'bid:bid_details_equipment' bid.bid_id %}">Go to Equipment</a>
+        <a href="{% url 'bid:bid_summary' bid.bid_id %}">Summary</a>
+    </div>
+
+
+    <!-- <p>
+            Site Count : ({{ bid.bid_project.project_sites.count }})
+        </p> -->
+    <!-- {% for site in bid.bid_project.project_sites.all %}
+        <small>
+            {{ site.site_id }} {{ site.site_name }}<br>
+            {{ site.address }},
+            {{ site.city }} {{ site.state }} {{ site.zip_code }}
+            {% if site.phone %}
+            <br>Phone: ({{ site.phone|slice:":3" }}) {{ site.phone|slice:"3:6" }}-{{ site.phone|slice:"6:10" }}
+            {% endif %}
+        </small>
+        {% endfor %} -->
+
+
+    <div class="filter_container">
+        <!-- Filter by Manufacturer -->
+        <label for="manufacturer_select">Manufacturer : </label>
+        <select id="manufacturer_select" name="manufacturer_select">
+            <option value="All">All</option>
+            {% for manufacturer in unique_manufacturers %}
+            <option value="{{ manufacturer }}">{{ manufacturer }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Search -->
+        <label for="search_input">Search : </label>
+        <input type="text" id="search_input" name="search" placeholder="Search by Manufacturer or Description">
+    </div><br>
+
+
+    <!-- <div class="col-md-2 d-flex align-items-center">
+    <div class="add_material_modal" class="modal">
+        <small>Can't Find What You're Looking For?</small><br>
+
+    </div>
+</div> -->
+    <div class="bid_form_container">
+
+        <form method="post" id="material_form" data-url="{% url 'bid:bid_details_material' bid.pk %}">
+            {% csrf_token %}
+
+            <!-- List of Materials -->
+            <div id="material_list" class="scrollable_table">
+
+                <table id="available_materials_table">
+                    <thead>
+                        <tr>
+                            <th>Selected</th>
+                            <th> &nbsp; </th>
+                            <th>Description</th>
+                            <th>MFR</th>
+                            <th>MFR #</th>
+                            <th>Image</th>
+                            <th>Graybar</th>
+                            <th>Anixter/WESCO</th>
+                            <th>Rexel</th>
+
+                    </thead>
+                    <tbody id="materials_table_body">
+                        {% for material in all_materials %}
+                        <tr class="material_item searchable" data-material-id="{{ material.material_id }}"
+                            data-material-manufacturer="{{ material.manufacturer }}"
+                            data-material-description="{{ material.description }}">
+                            <td>
+                                <input type="checkbox" class="material_checkbox"
+                                    name="material_{{ material.material_id }}" value="{{ material.material_id }}">
+                            </td>
+                            <td>
+                                <input type="number" class="item_quantity_input"
+                                    name="item_quantity_{{ material.material_id }}" placeholder="# of Line Items"
+                                    style="display:none;" />
+                            </td>
+                            <td>{{ material.description }}</td>
+                            <td>{{ material.manufacturer }}</td>
+                            <td>{{ material.manufacturer_number }}</td>
+
+                            <td>
+                                {% with image_url=material|get_image_url:material_vendors %}
+                                {% if image_url and image_url != 'N/A' %}
+                                <img src="{{ image_url }}" alt="Vendor Image" style="width:100px;">
+                                {% else %}
+                                <img src="{% static 'materials/img/no_image_avail.png' %}" alt="No Image Available"
+                                    style="width:100px;">
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+
+                            {% with vendor_prices=material|get_vendor_price:material_vendors %}
+                            <td>
+                                {% if vendor_prices.graybar %}
+                                ${{ vendor_prices.graybar.price }} ({{ vendor_prices.graybar.unit_of_measure }})
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if vendor_prices.anixter %}
+                                ${{ vendor_prices.anixter.price }} ({{ vendor_prices.anixter.unit_of_measure }})
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if vendor_prices.rexel %}
+                                ${{ vendor_prices.rexel.price }} ({{ vendor_prices.rexel.unit_of_measure }})
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            {% endwith %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="bid_materials_center">
+                <!-- Button to Add Selected Materials to Bid Materials List -->
+                <button type="button" id="add_selected_materials">Add Selected Materials</button>
+            </div>
+
+
+            <div id="bid_materials_list" class="scrollable_div">
+
+            </div>
+
+            <input type="submit" value="Save Bid" id="save_bid_materials">
+    </div>
+</div>
 </form>
 
 {% if bid_materials %}
@@ -189,6 +198,9 @@
                 <th>
                     &nbsp;
                 </th>
+                <th>
+                    &nbsp;
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -216,6 +228,9 @@
                     {{ bid_material|get_total_price }}
                 </td>
                 <td>
+                    <a href="">Edit</a>
+                </td>
+                <td>
                     <a href="{% url 'bid:delete_bid_material' bid.pk bid_material.material_id %}">Delete</a>
                 </td>
             </tr>
@@ -224,14 +239,5 @@
     </table>
 </div>
 {% endif %}
-
-
-
-<!-- <div class="col-md-2 d-flex align-items-center">
-    <div class="add_material_modal" class="modal">
-        <small>Can't Find What You're Looking For?</small><br>
-        {% include 'materials/add_material.html' %}
-    </div>
-</div> -->
 
 {% endblock %}

@@ -2,82 +2,96 @@
 {% block subtitle %} | {{ bid.bid_project.project_name }} {% endblock %}
 {% load static %}
 {% block styles %}
+<link rel="stylesheet" href="{% static 'bid/css/bid.css' %}">
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'bid/js/bid.js' %}"></script>
 {% endblock %}
 {% block content %}
 
-<button type="button" id="add_new_bid">Add New Bid</button>
+<div class="bid_container">
 
-
-<form method="post">
-    {% csrf_token %}
-    {{ bid_form.as_table }}
-
-    <h3>Labor Hours</h3>
-    <div class="initial-labor_hours-form labor_hours-form" style="display:none;">
-        {{ labor_hours_formset.empty_form.as_table }}
+    <div class="bid_page_header">
+        <h2>Labor and Travel</h2>
+        <small>for {{ bid.bid_project.project_name }} ({{ bid.bid_project.project_number }}) </small>
     </div>
-    <input type="hidden" name="labor_hours-TOTAL_FORMS" id="labor_hours-TOTAL_FORMS"
-        value="{{ labor_hours_formset.total_form_count }}" />
-    <input type="hidden" name="labor_hours-INITIAL_FORMS" id="labor_hours-INITIAL_FORMS"
-        value="{{ labor_hours_formset.initial_form_count }}" />
-    <input type="hidden" name="labor_hours-MIN_NUM_FORMS" id="labor_hours-MIN_NUM_FORMS"
-        value="{{ labor_hours_formset.min_num }}" />
-    <input type="hidden" name="labor_hours-MAX_NUM_FORMS" id="labor_hours-MAX_NUM_FORMS"
-        value="{{ labor_hours_formset.max_num }}" />
-    {% for labor_form in labor_hours_formset %}
-    <div class="labor_hours-form">
-        {{ labor_form.as_table }}
-    </div>
-    {% endfor %}
-    <button type="button" id="add_labor_hours">Add Labor Entry</button>
-    <button type="button" id="remove_labor_hours">Remove Last Labor Entry</button>
 
-    <h3>Travel Hours</h3>
-    <div class="initial-travel_hours-form travel_hours-form" style="display:none;">
-        {{ travel_hours_formset.empty_form.as_table }}
+    <div class="bid_nav">
+        <a href="{% url 'bid:bid_details_material' bid.bid_id %}">Go to Materials</a>
+        <a href="{% url 'bid:bid_details_equipment' bid.bid_id %}">Go to Equipment</a>
+        <a href="{% url 'bid:bid_summary' bid.bid_id %}">Summary</a>
     </div>
-    <input type="hidden" name="travel_hours-TOTAL_FORMS" id="travel_hours-TOTAL_FORMS"
-        value="{{ travel_hours_formset.total_form_count }}" />
-    <input type="hidden" name="travel_hours-INITIAL_FORMS" id="travel_hours-INITIAL_FORMS"
-        value="{{ travel_hours_formset.initial_form_count }}" />
-    <input type="hidden" name="travel_hours-MIN_NUM_FORMS" id="travel_hours-MIN_NUM_FORMS"
-        value="{{ travel_hours_formset.min_num }}" />
-    <input type="hidden" name="travel_hours-MAX_NUM_FORMS" id="travel_hours-MAX_NUM_FORMS"
-        value="{{ travel_hours_formset.max_num }}" />
-    {% for travel_form in travel_hours_formset %}
-    <div class="travel_hours-form">
-        {{ travel_form.as_table }}
+
+    <div class="bid_form_container">
+        <form method="post" id="bid_labor_and_travel_form">
+            {% csrf_token %}
+            {{ bid_form.as_table }}
+
+            <h3>Labor Hours</h3>
+            <div class="initial-labor_hours-form labor_hours-form" style="display:none;">
+                {{ labor_hours_formset.empty_form.as_table }}
+            </div>
+
+            <!-- Hidden inputs to capture the total number of forms in the formset -->
+            <input type="hidden" name="labor_hours-TOTAL_FORMS" id="labor_hours-TOTAL_FORMS"
+                value="{{ labor_hours_formset.total_form_count }}" />
+            <input type="hidden" name="labor_hours-INITIAL_FORMS" id="labor_hours-INITIAL_FORMS"
+                value="{{ labor_hours_formset.initial_form_count }}" />
+
+            <!-- Loop through the formset to display each form -->
+            {% for labor_form in labor_hours_formset %}
+            <div class="labor_hours-form">
+                {{ labor_form.as_table }}
+            </div>
+            {% endfor %}
+
+            <div class="bid_button_container">
+                <!-- Buttons to add and remove additional forms from the formset -->
+                <button type="button" id="add_labor_hours">Add Labor Entry</button>
+                <button type="button" id="remove_labor_hours">Remove Last Labor Entry</button>
+            </div>
+
+            <h3>Travel Hours</h3>
+            <div class="initial-travel_hours-form travel_hours-form" style="display:none;">
+                {{ travel_hours_formset.empty_form.as_table }}
+            </div>
+            <input type="hidden" name="travel_hours-TOTAL_FORMS" id="travel_hours-TOTAL_FORMS"
+                value="{{ travel_hours_formset.total_form_count }}" />
+            <input type="hidden" name="travel_hours-INITIAL_FORMS" id="travel_hours-INITIAL_FORMS"
+                value="{{ travel_hours_formset.initial_form_count }}" />
+
+            {% for travel_form in travel_hours_formset %}
+            <div class="travel_hours-form">
+                {{ travel_form.as_table }}
+            </div>
+            {% endfor %}
+            <button type="button" id="add_travel_hours">Add Travel Entry</button>
+            <button type="button" id="remove_travel_hours">Remove Last Travel Entry</button>
+
+            <h3>Travel Expenses</h3>
+            <div class="initial-travel_expense-form travel_expense-form" style="display:none;">
+                {{ travel_expense_formset.empty_form.as_table }}
+            </div>
+            <input type="hidden" name="travel_expense-TOTAL_FORMS" id="travel_expense-TOTAL_FORMS"
+                value="{{ travel_expense_formset.total_form_count }}" />
+            <input type="hidden" name="travel_expense-INITIAL_FORMS" id="travel_expense-INITIAL_FORMS"
+                value="{{ travel_expense_formset.initial_form_count }}" />
+
+            {% for travel_expense_form in travel_expense_formset %}
+            <div class="travel_expense-form">
+                {{ travel_expense_form.as_table }}
+            </div>
+            {% endfor %}
+            <button type="button" id="add_travel_expense">Add Travel Expense Entry</button>
+            <button type="button" id="remove_travel_expense">Remove Last Travel Expense Entry</button>
+
+            <input type="submit" value="Save" />
+
+        </form>
     </div>
-    {% endfor %}
-    <button type="button" id="add_travel_hours">Add Travel Entry</button>
-    <button type="button" id="remove_travel_hours">Remove Last Travel Entry</button>
 
-    <h3>Travel Expenses</h3>
-    <div class="initial-travel_expense-form travel_expense-form" style="display:none;">
-        {{ travel_expense_formset.empty_form.as_table }}
-    </div>
-    <input type="hidden" name="travel_expense-TOTAL_FORMS" id="travel_expense-TOTAL_FORMS"
-        value="{{ travel_expense_formset.total_form_count }}" />
-    <input type="hidden" name="travel_expense-INITIAL_FORMS" id="travel_expense-INITIAL_FORMS"
-        value="{{ travel_expense_formset.initial_form_count }}" />
-    <input type="hidden" name="travel_expense-MIN_NUM_FORMS" id="travel_expense-MIN_NUM_FORMS"
-        value="{{ travel_expense_formset.min_num }}" />
-    <input type="hidden" name="travel_expense-MAX_NUM_FORMS" id="travel_expense-MAX_NUM_FORMS"
-        value="{{ travel_expense_formset.max_num }}" />
-    {% for travel_expense_form in travel_expense_formset %}
-    <div class="travel_expense-form">
-        {{ travel_expense_form.as_table }}
-    </div>
-    {% endfor %}
-    <button type="button" id="add_travel_expense">Add Travel Expense Entry</button>
-    <button type="button" id="remove_travel_expense">Remove Last Travel Expense Entry</button>
+</div>
 
-
-
-    <input type="submit" value="Save" />
 </form>
 
 {% endblock %}

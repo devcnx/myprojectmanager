@@ -29,6 +29,18 @@ static/admin/
 # Ignore the Debug Log 
 debug.log
 
+# Ignore the .env File
+.env
+
+# Ignore celerybeat-schedule
+celerybeat-schedule
+ 
+# Ignore the some_temp_folder from celery
+some_temp_folder/
+
+# Ignore the scraper_constants.py file 
+scraper_constants.py
+
 gis/
 vendor/select2/
 i18n/

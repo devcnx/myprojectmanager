@@ -10,6 +10,62 @@ from projects.models import Project
 from travel.models import TravelHours, TravelExpense
 
 
+class BidEquipment(models.Model):
+    equipment = models.ForeignKey(
+        Equipment,
+        on_delete=models.CASCADE,
+        verbose_name='Bid Equipment',
+        db_column='bid_equipment',
+    )
+    quantity = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Bid Equipment Quantity',
+        db_column='bid_equipment_quantity',
+        default=0.00,
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name='Bid Equipment Unit Price',
+        db_column='bid_equipment_unit_price',
+        default=0.00,
+    )
+    start_date = models.DateField(
+        verbose_name='Bid Equipment Start Date',
+        db_column='bid_equipment_start_date',
+        null=True,
+        blank=True,
+    )
+    start_time = models.TimeField(
+        verbose_name='Bid Equipment Start Time',
+        db_column='bid_equipment_start_time',
+        null=True,
+        blank=True,
+    )
+    end_date = models.DateField(
+        verbose_name='Bid Equipment End Date',
+        db_column='bid_equipment_end_date',
+        null=True,
+        blank=True,
+    )
+    end_time = models.TimeField(
+        verbose_name='Bid Equipment End Time',
+        db_column='bid_equipment_end_time',
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        db_table = 'bid_equipment'
+        verbose_name = 'Bid Equipment'
+        verbose_name_plural = 'Bid Equipment'
+        ordering = ['id']
+
+    def __str__(self):
+        return str(self.equipment)
+
+
 class BidMaterial(models.Model):
     material = models.ForeignKey(
         Material,
@@ -143,7 +199,7 @@ class Bid(models.Model):
         blank=True,
     )
     bid_equipment = models.ManyToManyField(
-        Equipment,
+        BidEquipment,
         verbose_name='Bid Equipment',
         db_column='bid_equipment',
         blank=True,

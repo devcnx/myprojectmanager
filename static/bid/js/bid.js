@@ -63,6 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const removeTravelHoursButton = $("#remove_travel_hours");
         const removeTravelExpenseButton = $("#remove_travel_expense");
 
+        const addEquipmentButton = $("#add_equipment");
+        const removeEquipmentButton = $("#remove_equipment");
+
         if (addLaborHoursButton) {
             addLaborHoursButton.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -104,6 +107,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 removeLastForm('travel_expense', 'dynamic_travel_expense_form');
             });
         }
+
+        if (addEquipmentButton) {
+            addEquipmentButton.addEventListener('click', (event) => {
+                console.log('add equipment');
+                event.preventDefault();
+                addForm(event.target, 'bid_equipment', 'dynamic_bid_equipment_form');
+            });
+        }
+
+        if (removeEquipmentButton) {
+            removeEquipmentButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                removeLastForm('bid_equipment', 'dynamic_bid_equipment_form');
+            });
+        }
+
     };
     init();
 });

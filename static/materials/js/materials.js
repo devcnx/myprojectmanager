@@ -1,40 +1,3 @@
-// document.addEventListener('DOMContentLoaded', () => {
-
-//     const init = () => {
-//         const materialForm = $("#material_form");
-
-//         materialForm.on('submit', (event) => {
-//             event.preventDefault();
-
-//             const formData = new FormData(materialForm[0]);
-//             // const url = materialForm.getAttribute('data-url')
-//             const url = materialForm.attr('data-url');
-
-//             fetch(url, {
-//                 method: 'POST',
-//                 body: formData,
-//             })
-//                 .then((response) => {
-//                     if (response.ok) {
-//                         alert(`Material ${formData.get('description')} Added Successfully.`)
-//                         return response.json()
-//                     } else {
-//                         throw new Error("Item Already Exists")
-//                     }
-//                 })
-//                 .then((data) => {
-//                     addMaterialToSelected(data);
-//                 })
-//                 .catch((error) => {
-//                     alert(`Item with MFR# ${formData.get('manufacturer_number')} Already Exists.`)
-//                 });
-//         });
-//     };
-
-//     init();
-
-// });
-
 $(document).ready(function () {
     const init = () => {
         // This applies Select2 to the manufacturer dropdown
@@ -42,33 +5,6 @@ $(document).ready(function () {
             placeholder: "Select a Manufacturer",
             allowClear: true,
         });
-
-        // const filterMaterials = (event) => {
-        //     event.preventDefault();
-        //     var manufacturer = $("#manufacturer_select").val();
-        //     var searchValue = $("#search_input").val().toLowerCase();
-
-        //     $(".material_item").each(function () {
-        //         var materialManufacturer = $(this).data("material-manufacturer").toString().toLowerCase();
-        //         // var materialDescription = $(this).text().toLowerCase();
-        //         var materialDescription = $(this).find('label').text().toLowerCase();
-
-        //         if (manufacturer === 'All') {
-        //             if (materialDescription.includes(searchValue)) {
-        //                 $(this).show();
-        //             } else {
-        //                 $(this).hide();
-        //             }
-        //         } else {
-        //             if ((!manufacturer || materialManufacturer.toLowerCase() === manufacturer.toLowerCase()) && materialDescription.includes(searchValue)) {
-        //                 $(this).show();
-        //             } else {
-        //                 $(this).hide();
-        //             }
-        //         }
-
-        //     });
-        // }
 
         const filterMaterials = (event) => {
             event.preventDefault();
@@ -164,30 +100,29 @@ $(document).ready(function () {
         $("#add_selected_materials").on("click", function () {
             $('.material_checkbox:checked').each(function () {
                 const materialId = $(this).val();
-                const materialItem = $(this).closest('.material_item');
+                const materialRow = $(this).closest('tr');
                 const materialData = {
                     material_id: materialId,
-                    description: materialItem.find('label').text(),
-                    manufacturer: materialItem.data('material-manufacturer'),
+                    description: materialRow.find('td:nth-child(3)').text(),
+                    manufacturer: materialRow.find('td:nth-child(4)').text(),
                 };
-                const quantity = materialItem.find('input[name^="item_quantity"]').val();
+                const quantity = materialRow.find('input[name^="item_quantity"]').val();
                 if (quantity === '' || quantity === '0') {
                     alert('Enter the # of Line Items to Add to Bid List');
                     return;
                 }
-                const unitOfMeasure = materialItem.find('select[name^="item_uom"]').val();
-                const unitPrice = materialItem.find('input[name^="item_unit_price"]').val();
-
+                const unitOfMeasure = materialRow.find('td:nth-child(6) select').val();
+                const unitPrice = materialRow.find('td:nth-child(7) input').val();
 
                 addMaterialToBidList(materialData, quantity, unitOfMeasure, unitPrice);
 
                 // Uncheck the checkbox after adding to the bid list
                 $(this).prop('checked', false);
                 // Hide the quantity input
-                materialItem.find('input[name^="item_quantity"]').hide();
+                materialRow.find('input[name^="item_quantity"]').hide();
             });
-
         });
+
 
         $(document).on("click", ".remove_bid_material_button", function () {
             $(this).closest('.bid_material_item').remove();
@@ -224,7 +159,7 @@ $(document).ready(function () {
             });
 
             let csrftoken = $('input[name=csrfmiddlewaretoken]').val();
-            let url = $('material_form').attr('data-url');
+            let url = $('#add_material_form').attr('data-url');
 
             $.ajax({
                 type: "POST",
@@ -241,20 +176,92 @@ $(document).ready(function () {
                         window.location.href = response.redirect_url;
                     } else {
                         alert("Error Saving Bid Materials");
+                        console.log(response.responseText);
                     }
                 },
                 error: function (response) {
                     alert("Error Saving Bid Materials");
                     // Log as much information about the error as possible
-                    console.log(response);
-                    console.log(response.status);
-                    console.log(response.statusText);
+                    console.log('wrong response');
                     console.log(response.responseText);
+                    // The responseText is undefined.  Why?
+
 
                 }
             });
 
         });
+
+        // const addMaterialToSelected = (material, material_id) => {
+        //     const bidMaterialsList = $("#bid_materials_list");
+        //     const materialItem = $('<div>').addClass('bid_material_item').attr('data-material-id', material.material_id);
+        //     const materialLabel = $('<label>').text(`${material.description}`);
+        //     const quantityLabel = $('<label>').text(`QTY: `);
+        //     const quantityInput = $('<input>').attr({
+        //         type: 'number',
+        //         class: 'bid_quantity_input',
+        //         name: `quantity_${material.material_id}`,
+        //     });
+        //     const unitOfMeasureSelect = $('<select>').attr({
+        //         name: `existing_bid_material_uom_${material.material_id}`,
+        //         class: 'bid_material_uom_select',
+        //     });
+        //     const unitOfMeasureOptions = [
+        //         { value: 1, text: 'EA' },
+        //         { value: 100, text: '100EA' },
+        //         { value: 1000, text: '1000EA' },
+        //     ];
+        //     unitOfMeasureOptions.forEach((option) => {
+        //         const optionElement = $('<option>').attr('value', option.value).text(option.text);
+        //         unitOfMeasureSelect.append(optionElement);
+        //     });
+        //     const unitPriceInput = $('<input>').attr({
+        //         type: 'number',
+        //         class: 'bid_unit_price_input',
+        //         name: `unit_price_${material.material_id}`,
+        //     });
+        //     const removeButton = $('<button>').addClass('remove_bid_material_button').text('Remove');
+
+        //     materialItem.append(quantityLabel, quantityInput, unitOfMeasureSelect, unitPriceInput, materialLabel, removeButton);
+        //     bidMaterialsList.append(materialItem);
+        // };
+
+
+        // const materialForm = $("#add_material_form");
+
+        // materialForm.on('submit', (event) => {
+        //     event.preventDefault();
+
+        //     const formData = new FormData(materialForm[0]);
+        //     console.log(formData.get('description'));
+        //     const url = materialForm.attr('data-url');
+
+        //     fetch(url, {
+        //         method: 'POST',
+        //         body: formData,
+
+        //     })
+        //         .then((response) => {
+        //             if (response.ok) {
+        //                 alert(`Material ${formData.get('description')} Added Successfully.`)
+        //                 return response.json();
+        //             } else {
+        //                 throw new Error("Item Already Exists")
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             alert(`Item with MFR# ${formData.get('manufacturer_number')} Already Exists.`);
+
+        //         })
+        //         .then((data) => {
+        //             if (data) {
+        //                 addMaterialToSelected(data, data.material);
+        //             } else {
+        //                 console.log('no data');
+        //             }
+        //         });
+
+        // });
 
 
     };
