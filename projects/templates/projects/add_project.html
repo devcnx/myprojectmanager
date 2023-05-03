@@ -9,6 +9,10 @@
 
 Add Project<br>
 
-{{ project_form.as_table }}
+<form method="post" id="add_project_form">
+    {% csrf_token %}
+    {{ project_form.as_table }}
+    <input type="submit" value="Save" />
+</form>
 
 {% endblock %}

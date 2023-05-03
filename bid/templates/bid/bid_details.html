@@ -19,13 +19,15 @@
     <div class="bid_nav">
         <a href="{% url 'bid:bid_details_material' bid.bid_id %}">Go to Materials</a>
         <a href="{% url 'bid:bid_details_equipment' bid.bid_id %}">Go to Equipment</a>
-        <a href="{% url 'bid:bid_summary' bid.bid_id %}">Summary</a>
+        <a href="{% url 'bid:bid_summary' bid.bid_id %}">Go to Summary</a>
     </div>
 
     <div class="bid_form_container">
         <form method="post" id="bid_labor_and_travel_form">
             {% csrf_token %}
-            {{ bid_form.as_table }}
+            <div id="bid_form_on_details_page">
+                {{ bid_form.as_table }}
+            </div>
 
             <h3>Labor Hours</h3>
             <div class="initial-labor_hours-form labor_hours-form" style="display:none;">
@@ -47,8 +49,8 @@
 
             <div class="bid_button_container">
                 <!-- Buttons to add and remove additional forms from the formset -->
-                <button type="button" id="add_labor_hours">Add Labor Entry</button>
-                <button type="button" id="remove_labor_hours">Remove Last Labor Entry</button>
+                <button type="button" id="add_labor_hours">Add Labor</button>
+                <button type="button" id="remove_labor_hours">Remove Labor</button>
             </div>
 
             <h3>Travel Hours</h3>
@@ -65,8 +67,11 @@
                 {{ travel_form.as_table }}
             </div>
             {% endfor %}
-            <button type="button" id="add_travel_hours">Add Travel Entry</button>
-            <button type="button" id="remove_travel_hours">Remove Last Travel Entry</button>
+
+            <div class="bid_button_container">
+                <button type="button" id="add_travel_hours">Add Travel</button>
+                <button type="button" id="remove_travel_hours">Remove Travel</button>
+            </div>
 
             <h3>Travel Expenses</h3>
             <div class="initial-travel_expense-form travel_expense-form" style="display:none;">
@@ -82,10 +87,15 @@
                 {{ travel_expense_form.as_table }}
             </div>
             {% endfor %}
-            <button type="button" id="add_travel_expense">Add Travel Expense Entry</button>
-            <button type="button" id="remove_travel_expense">Remove Last Travel Expense Entry</button>
 
-            <input type="submit" value="Save" />
+            <div class="bid_button_container">
+                <button type="button" id="add_travel_expense">Add Expense</button>
+                <button type="button" id="remove_travel_expense">Remove Expense</button>
+            </div>
+
+            <div class="bid_button_container">
+                <input type="submit" value="Save" />
+            </div>
 
         </form>
     </div>

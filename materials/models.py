@@ -45,6 +45,30 @@ class Material(models.Model):
         return sorted(set([x.manufacturer.lower() for x in Material.objects.all()]))
 
 
+class MaterialAlternativeManufacturerNumber(models.Model):
+    material = models.ForeignKey(
+        Material, on_delete=models.CASCADE,
+        verbose_name='Material',
+        related_name='material_alternatives',
+        db_column='material_id',
+    )
+    alternative_manufacturer_number = models.CharField(
+        max_length=255,
+        verbose_name='Alternative Manufacturer Number',
+        db_column='alternative_manufacturer_number',
+        unique=True,
+    )
+
+    class Meta:
+        db_table = 'material_alt_mfr_numbers'
+        verbose_name = 'Material Alternative Manufacturer Number'
+        verbose_name_plural = 'Material Alternative Manufacturer Numbers'
+        ordering = ['material', 'alternative_manufacturer_number']
+
+    def __str__(self):
+        return f'{self.material.description} | {self.alternative_manufacturer_number}'
+
+
 class MaterialVendor(models.Model):
     id = models.AutoField(
         primary_key=True,

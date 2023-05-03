@@ -51,25 +51,22 @@
                 <button class="sub_nav_button">
                     <a href="{% url 'main:dashboard' %}">Dashboard</a>
                 </button>
-                <button class="sub_nav_button">
+                <!-- <button class="sub_nav_button">
                     <p>Jobs</p>
                     <ul>
                         <li>
                             <a href="">View Jobs</a>
                         </li>
                     </ul>
-                </button>
+                </button> -->
                 <button class="sub_nav_button">
                     <p>Opportunities</p>
                     <ul>
                         <li>
-                            <a href="">All Opportunities</a>
+                            <a href="{% url 'bid:index' %}">All Opportunities</a>
                         </li>
                         <li>
                             <a href="{%url 'projects:add_project' %}">Create Opportunity</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'bid:index' %}">Bid Sheets</a>
                         </li>
                         <li>
                             <a href="">Proposal Template</a>
@@ -97,9 +94,9 @@
                         <li>
                             <a href="">Time Sheet</a>
                         </li>
-                        <li>
+                        <!-- <li>
                             <a href="{% url 'materials:add_material' %}">Materials</a>
-                        </li>
+                        </li> -->
                     </ul>
                 </button>
             </div>

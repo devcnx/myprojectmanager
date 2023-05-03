@@ -1,3 +1,4 @@
+import re
 from bid.models import BidMaterial
 from django import template
 from django.utils.safestring import mark_safe
@@ -82,3 +83,21 @@ def get_vendor_price(material, material_vendors):
             else:
                 vendor_prices[material_vendor.vendor.vendor_name] = vendor_data
     return vendor_prices
+
+
+@register.filter
+def get_per_price(vendor_price, unit_of_measure):
+    if unit_of_measure in {'1', 'ea', 'each'}:
+        return vendor_price
+    elif unit_of_measure in {'100', '100ea', '100ft'}:
+        return vendor_price / 100
+    elif unit_of_measure in {'1000', '1000ea', '1000ft'}:
+        return vendor_price / 1000
+    else:
+        return None
+
+
+@register.filter
+def get_uom_name(unit_of_measure):
+    uom_name = re.sub(r'\d+', '', unit_of_measure)
+    return uom_name.strip()

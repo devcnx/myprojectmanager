@@ -1,5 +1,5 @@
 from customers.models import CustomerContact
-from datetime import date
+from datetime import date, datetime
 from django.apps import apps
 from django.contrib.auth.models import User
 from django.db import models
@@ -50,12 +50,12 @@ class Project(models.Model):
     project_start = models.DateField(
         verbose_name='Project Start',
         db_column='project_start',
-        default=date(1999, 1, 1),
+        default=datetime.date(datetime.now()),
     )
     project_end = models.DateField(
         verbose_name='Project End',
         db_column='project_end',
-        default=date(1999, 1, 1),
+        default=datetime.date(datetime.now()),
     )
     project_sites = models.ManyToManyField(
         Site,

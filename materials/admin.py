@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db.models import Q
 from .forms import MaterialForm
-from .models import Material, MaterialVendor, MaterialOrderItem, MaterialOrder
+from .models import Material, MaterialAlternativeManufacturerNumber, MaterialVendor, MaterialOrderItem, MaterialOrder
 
 
 class MaterialAdmin(admin.ModelAdmin):
@@ -12,6 +12,19 @@ class MaterialAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Material, MaterialAdmin)
+
+
+class MaterialAlternativeManufacturerNumberAdmin(admin.ModelAdmin):
+    model = MaterialAlternativeManufacturerNumber
+    list_display = ('get_material', 'alternative_manufacturer_number')
+
+    def get_material(self, obj):
+        return obj.material.description
+    get_material.short_description = 'Material'
+
+
+admin.site.register(MaterialAlternativeManufacturerNumber,
+                    MaterialAlternativeManufacturerNumberAdmin)
 
 
 class MaterialVendorAdmin(admin.ModelAdmin):

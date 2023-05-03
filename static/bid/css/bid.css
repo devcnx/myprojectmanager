@@ -1,123 +1,340 @@
 @charset "utf-8";
 
-/* Labor and Travel Page of the Bid Sheet */
-/* .bid_container {
-    border: 1px solid #ccc;
-    box-shadow: 0 0 10px #ccc;
-    width: 75%;
-    text-transform: uppercase;
-    margin: 0 auto;
+/* All Bid Pages */
+.bid_container {
+    width: 100%;
+    height: 100%;
+    border-top: 1px solid #ccc;
+}
+
+.bid_page_header {
+    /* border: 1px solid pink; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
-} */
+    padding-bottom: 10px;
+}
 
-/* .bid_page_header { */
-/* border: 1px solid red; */
-/* display: flex;
+.bid_page_header h2 {
+    text-transform: uppercase;
+}
+
+.bid_nav {
+    /* border: 1px solid red; */
+    display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
-} */
+    padding: 10px
+}
 
-/* .bid_nav { */
-/* border: 1px solid green; */
-/* display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 100%;
-    margin: 10px 0;
-} */
-
-/* .bid_nav a {
+.bid_nav a {
     text-decoration: none;
-    color: #000d86;
-    background-color: #eee;
+    color: #fff;
+    background-color: #081d65;
+    padding: 10px;
+    margin-right: 10px;
+    width: 175px;
+    text-align: center;
+}
+
+.bid_nav a:hover {
+    color: #fff;
+    background-color: #686f82;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
+}
+
+.bid_form_container {
+    /* border: 1px solid green; */
+    width: 100%;
     padding: 5px;
-} */
+}
 
-/* #bid_labor_and_travel_form { */
-/* border: 1px solid blue; */
-/* width: 100%; */
-/* } */
-
-/* #bid_labor_and_travel_form label {
-    display: flex;
-    flex-direction: row;
-    margin: 2px 0;
-    width: 20%;
-} */
-
-/* #bid_labor_and_travel_form select,
-#bid_labor_and_travel_form input {
-    margin: 2px 0;
-    width: 40%;
-    border: 1px solid #ccc;
-} */
-
-
-/* .bid_form_container { */
-/* border: 1px solid blue; */
-/* width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-} */
-
-/* .bid_button_container {
-    /* border: 1px solid red; */
-/* width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-} */
-
-/* .filter_container {
+.bid_form_container form {
+    /* border: 1px solid blue; */
     width: 100%;
-} */
+    height: 100%;
+    padding: 5px;
+}
 
-#material_form {
-    /* border: 1px solid red; */
+.bid_button_container {
+    /* border: 1px solid purple; */
     width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.bid_button_container button,
+.bid_button_container input[type='submit'] {
+    border: none;
+    background-color: #081d65;
+    color: #fff;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+    font-size: 11px;
+}
+
+.bid_button_container button:hover,
+.bid_button_container input[type='submit']:hover {
+    background-color: #686f82;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    text-transform: uppercase;
 }
 
 
-#material_list {
-    /* border: 1px solid orange; */
+/* Labor and Travel Page of the Bid Sheet */
+#bid_labor_and_travel_form {
+    /* border: 1px solid red; */
     width: 100%;
+    margin: 0 auto;
+}
 
+#bid_labor_and_travel_form label {
+    display: in-line block;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#bid_labor_and_travel_form h3 {
+    text-transform: uppercase;
+    padding: 5px;
+}
+
+#bid_labor_and_travel_form select,
+#bid_labor_and_travel_form input,
+#bid_labor_and_travel_form input[type='number'],
+#bid_labor_and_travel_form input[type='text'],
+#bid_labor_and_travel_form input[type='date'],
+#bid_labor_and_travel_form input[type='time'] {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+
+#bid_labor_and_travel_form #id_bid_status {
+    width: 250px;
+}
+
+#bid_labor_and_travel_form #id_bid_project {
+    width: 500px;
+}
+
+#bid_labor_and_travel_form #id_bid_status,
+#bid_labor_and_travel_form #id_bid_project {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+}
+
+#bid_labor_and_travel_form #id_bid_due_date,
+#bid_labor_and_travel_form #id_bid_due_time {
+    width: 150px;
+    height: 30px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+}
+
+/* Labor Hours, Travel Hours, and Travel Expense Forms */
+#bid_form_on_details_page {
+    /* border: 1px solid red; */
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+}
+
+.labor_hours-form,
+.travel_hours-form,
+.travel_expense-form {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+}
+
+select[name*='labor_hours'],
+select[name*='travel_hours'],
+select[name*='travel_expense'] {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 14px;
+}
+
+select[name$='labor_type'],
+select[name$='travel_type'],
+select[name$='expense_type'] {
+    width: 200px;
+}
+
+select[name='bid_project'] {
+    /* Disable the ability to change the project name */
+    pointer-events: none;
+    background-color: #f5f5f5;
+
+}
+
+
+/* Material Page of the Bid Sheet */
+.filter_container {
+    /* border: 1px solid red; */
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 5px;
+}
+
+.filter_container label {
+    margin-right: 10px;
+    text-transform: uppercase;
+}
+
+.filter_container input[type='text'] {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    text-align: justify;
+    width: 275px;
+}
+
+.filter_container input[type='text']::placeholder {
+    font-size: 10px;
+    font-style: italic;
+}
+
+.filter_container input[type='text']:focus {
+    outline: none;
+    border-bottom: 1px solid #686f82;
+}
+
+#material_form,
+#material_list {
+    width: 100%;
 }
 
 .scrollable_table {
+    overflow: auto;
     height: 300px;
-    max-height: 300px;
-    width: 100%;
-    max-width: 100%;
-    overflow-y: auto;
     border: 1px solid #ccc;
-    padding: 10px;
+    margin-bottom: 20px;
 }
 
-.scrollable_div {
-    height: 300px;
-    max-height: 300px;
-    min-height: 300px;
+.scrollable_table table {
     width: 100%;
-    max-width: 100%;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 10px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    text-transform: uppercase;
 }
 
 #available_materials_table {
-    /* border: 1px solid yellow; */
     width: 100%;
-    text-align: left;
+    border-collapse: collapse;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#material_headers {
+    background-color: #081d65;
+    color: #fff;
+    position: sticky;
+}
+
+#available_materials_table th {
+    padding: 10px;
+}
+
+#available_materials_table td {
+    padding: 0;
+    border: 1px solid #ccc;
+}
+
+.line_item_qty_input {
+    width: 165px;
+}
+
+.line_item_qty_input input[type='number'] {
+    width: 50%;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+.line_item_qty_input input[type='number']:focus {
+    outline: none;
+    border-bottom: 1px solid #686f82;
+    background-color: #f5f5f5;
+}
+
+/* Newly Added Bid Materials */
+.bid_material_item {
+    border: 1px solid orange;
+    width: 50%;
+    margin: 10px 0;
+}
+
+.bid_material_item_first_line {
+    background-color: #081d65;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    text-transform: uppercase;
+}
+
+.bid_material_item_second_line {
+    background-color: #f5f5f5;
+    color: #000;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    text-transform: uppercase;
+}
+
+.bid_material_item_third_line {
+    background-color: #686f82;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    text-transform: uppercase;
+}
+
+/* Existing Bid Materials  */
+.existing_bid_materials {
+    border: 1px solid aqua;
+    width: 100%;
 }
 
 #bid_materials_summary_table {
-    /* border: 1px solid blue; */
     width: 100%;
-    text-align: left;
+    border-collapse: collapse;
+    text-transform: uppercase;
+    margin: 0 auto;
+}
+
+#bid_materials_summary_table thead th {
+    background-color: #081d65;
+    color: #fff;
+    padding: 10px;
 }

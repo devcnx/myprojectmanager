@@ -20,21 +20,26 @@ class BidForm(forms.ModelForm):
     class Meta:
         model = Bid
         fields = '__all__'
-        exclude = ('bid_labor_hours', 'bid_travel_hours',
+        readonly_fields = ('bid_project',)
+        exclude = ('bid_submitted', 'bid_submitted_by', 'bid_labor_hours', 'bid_travel_hours',
                    'bid_travel_expenses', 'bid_materials', 'bid_equipment',
                    'created_on', 'created_by', 'last_updated_on', 'last_updated_by')
+        widgets = {
+            'bid_due_date': forms.DateInput(attrs={'type': 'date', 'value': datetime.date.today()}),
+            'bid_due_time': forms.TimeInput(attrs={'type': 'time', 'value': datetime.datetime.now().strftime('%H:%M')}),
+        }
 
 
 class BidLaborHoursForm(forms.Form):
     labor_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
     labor_type = forms.ChoiceField(
-        choices=LaborHours.LABOR_HOURS_CHOICES)
+        choices=LaborHours.LABOR_HOURS_CHOICES, label='Labor Type')
     labor_rate = forms.ModelChoiceField(
-        queryset=Rate.objects.all(), empty_label=None)
+        queryset=Rate.objects.all(), label='Labor Rate', empty_label=None)
     labor_hours_quantity = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=0.00)
+        max_digits=10, decimal_places=2, initial=0.00, label='# of Days/Nights')
     labor_hours = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=0.00)
+        max_digits=10, decimal_places=2, initial=0.00, label='Hours Per Day/Night')
     can_delete = forms.BooleanField(
         required=False, initial=False, widget=forms.HiddenInput())
 
@@ -52,13 +57,13 @@ BidLaborHoursFormSet = formset_factory(
 class BidTravelHoursForm(forms.Form):
     travel_id = forms.IntegerField(required=False, widget=forms.HiddenInput())
     travel_type = forms.ChoiceField(
-        choices=TravelHours.TRAVEL_HOURS_CHOICES)
+        choices=TravelHours.TRAVEL_HOURS_CHOICES, label='Travel Type')
     travel_rate = forms.ModelChoiceField(
-        queryset=Rate.objects.all(), empty_label=None)
+        queryset=Rate.objects.all(), label='Travel Rate', empty_label=None)
     travel_hours_quantity = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=0.00)
+        max_digits=10, decimal_places=2, initial=0.00, label='# of Days/Nights')
     travel_hours = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=0.00)
+        max_digits=10, decimal_places=2, initial=0.00, label='Hours Per Day/Night')
     can_delete = forms.BooleanField(
         required=False, initial=False, widget=forms.HiddenInput())
 
@@ -77,11 +82,11 @@ class BidTravelExpenseForm(forms.Form):
     travel_expense_id = forms.IntegerField(
         required=False, widget=forms.HiddenInput())
     expense_type = forms.ChoiceField(
-        choices=TravelExpense.EXPENSE_TYPE_CHOICES)
+        choices=TravelExpense.EXPENSE_TYPE_CHOICES, label='Expense Type')
     expense_quantity = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=0.00)
+        max_digits=10, decimal_places=2, initial=0.00, label='Quantity')
     expense_amount = forms.DecimalField(
-        max_digits=10, decimal_places=2, initial=0.0)
+        max_digits=10, decimal_places=2, initial=0.00, label='Amount')
     can_delete = forms.BooleanField(
         required=False, initial=False, widget=forms.HiddenInput())
 
@@ -132,8 +137,9 @@ class BidMaterialForm(forms.ModelForm):
 class BidEquipmentForm(forms.Form):
     id = forms.IntegerField(
         required=False, widget=forms.HiddenInput())
-    equipment = forms.ModelChoiceField(
-        queryset=Equipment.objects.all(), empty_label=None)
+    equipment = BidEquipment.equipment.field.formfield(
+        widget=forms.Select(attrs={'class': 'form-control'}))
+
     quantity = forms.DecimalField(
         max_digits=10, decimal_places=2, initial=1.00)
     unit_price = forms.DecimalField(

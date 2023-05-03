@@ -7,6 +7,8 @@
 {% endblock %}
 {% block content %}
 
+<a href="{% url 'work_orders:add_work_order_trip' object.work_order_id %}">Add Trip</a>
+
 <div class="details_container">
     {% for trip in work_order_trips %}
     <div class="details">

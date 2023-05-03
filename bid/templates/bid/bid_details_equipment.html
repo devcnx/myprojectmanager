@@ -2,6 +2,7 @@
 {% block subtitle %} | Equipment for {{ bid.bid_project.project_name }} {% endblock %}
 {% load static %}
 {% block styles %}
+<link rel="stylesheet" href="{% static 'bid/css/bid.css' %}">
 {% endblock %}
 {% block scripts %}
 <script src="{% static 'bid/js/bid.js' %}"></script>
@@ -9,30 +10,20 @@
 {% block content %}
 
 <div class="bid_container">
-    <h1>Equipment for {{ bid.bid_project.project_name }}</h1>
+
+    <div class="bid_page_header">
+        <h2>Equipment</h2>
+        <small>for {{ bid.bid_project.project_name }} ({{ bid.bid_project.project_number }}) </small>
+    </div>
 
     <!-- Add a way for the user to navigate to different pages for the bid -->
     <div class="bid_nav">
-        <a href="{% url 'bid:bid_details_material' bid.bid_id %}">Go to Material</a>
         <a href="{% url 'bid:bid_details' bid.bid_id %}">Go to Labor / Travel</a>
-        <a href="{% url 'bid:bid_summary' bid.bid_id %}">Summary</a>
+        <a href="{% url 'bid:bid_details_material' bid.bid_id %}">Go to Material</a>
+        <a href="{% url 'bid:bid_summary' bid.bid_id %}">Go to Summary</a>
     </div>
 
-
-    <!-- <p>
-        Site Count : ({{ bid.bid_project.project_sites.count }})
-    </p>
-    {% for site in bid.bid_project.project_sites.all %}
-    <small>
-        {{ site.site_id }} {{ site.site_name }}<br>
-        {{ site.address }},
-        {{ site.city }} {{ site.state }} {{ site.zip_code }}
-        {% if site.phone %}
-        <br>Phone: ({{ site.phone|slice:":3" }}) {{ site.phone|slice:"3:6" }}-{{ site.phone|slice:"6:10" }}
-        {% endif %}
-    </small>
-    {% endfor %} -->
-    <div class="bid_container">
+    <div class="bid_form_container">
         <form method="post">
             {% csrf_token %}
 
@@ -47,14 +38,18 @@
                 value="{{ bid_equipment_formset.initial_form_count }}" />
             {% for equipment_form in bid_equipment_formset %}
             <div class="bid_equipment-form">
-                {{ bid_equipment_formset.management_form }}
                 {{ equipment_form.as_table }}
             </div>
             {% endfor %}
-            <button type="button" id="add_equipment">Add Equipment Entry</button>
-            <button type="button" id="remove_equipment">Remove Last Equipment Entry</button>
 
-            <input type="submit" value="Save" />
+            <div class="bid_button_container">
+                <button type="button" id="add_equipment">Add Equipment Entry</button>
+                <button type="button" id="remove_equipment">Remove Last Equipment Entry</button>
+            </div>
+
+            <div class="bid_button_container">
+                <input type="submit" value="Save" />
+            </div>
         </form>
     </div>
 </div>

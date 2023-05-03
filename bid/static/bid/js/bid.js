@@ -112,14 +112,14 @@ document.addEventListener('DOMContentLoaded', () => {
             addEquipmentButton.addEventListener('click', (event) => {
                 console.log('add equipment');
                 event.preventDefault();
-                addForm(event.target, 'bid_equipment', 'dynamic_bid_equipment_form');
+                addForm(event.target, 'bid_equipment', 'dynamic_equipment_form');
             });
         }
 
         if (removeEquipmentButton) {
             removeEquipmentButton.addEventListener('click', (event) => {
                 event.preventDefault();
-                removeLastForm('bid_equipment', 'dynamic_bid_equipment_form');
+                removeLastForm('bid_equipment', 'dynamic_equipment_form');
             });
         }
 

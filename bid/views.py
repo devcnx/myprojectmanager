@@ -3,7 +3,7 @@ from bid.templatetags.bid_tags import get_material_description, get_manufacturer
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Case, When, IntegerField
+from django.db.models import Count, Case, When, IntegerField, Sum
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
@@ -55,6 +55,8 @@ class BidDetailView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         context['bid'] = self.get_bid()
+        bid_form = BidForm(instance=self.get_bid())
+        bid_form['bid_project'].field.readonly_fields = True
         context['bid_form'] = BidForm(instance=self.get_bid())
         context['bid_material_form'] = BidMaterialForm()
 
@@ -338,78 +340,69 @@ class BidDetailsEquipmentView(LoginRequiredMixin, TemplateView):
     template_name = 'bid/bid_details_equipment.html'
 
     def get_context_data(self, **kwargs):
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
-        context['user'] = self.request.user
-        context['bid'] = Bid.objects.get(pk=self.kwargs['pk'])
-        context['bid_form'] = BidForm(instance=context['bid'])
-        context['bid_equipment_form'] = BidEquipmentForm()
-        context['bid_equipment_formset'] = BidEquipmentFormSet(
-            prefix='bid_equipment')
+        context['bid'] = bid
+        bid_equipment = bid.bid_equipment.all()
+        if bid_equipment:
+            context['bid_equipment'] = bid_equipment
+        else:
+            context['bid_equipment'] = None
 
         bid_equipment_initial = [
             {
-                'id': be.id,
-                'equipment': be.equipment.equipment_id,
-                'quantity': be.quantity,
-                'unit_price': be.unit_price,
-                'start_date': be.start_date,
-                'start_time': be.start_time,
-                'end_date': be.end_date,
-                'end_time': be.end_time,
-            } for be in context['bid'].bid_equipment.all()
-        ]
+                'equipment': be.equipment,
 
-        context['bid_equipment_formset'] = BidEquipmentFormSet(
-            prefix='bid_equipment', initial=bid_equipment_initial)
+            } for be in bid_equipment
+        ]
 
         return context
 
-    def post(self, request, *args, **kwargs):
-        bid = Bid.objects.get(pk=self.kwargs['pk'])
-        bid_form = BidForm(request.POST, instance=bid)
-        bid_equipment_formset = BidEquipmentFormSet(
-            request.POST, prefix='bid_equipment')
+    # def post(self, request, *args, **kwargs):
+    #     bid = Bid.objects.get(pk=self.kwargs['pk'])
+    #     bid_form = BidForm(request.POST, instance=bid)
+    #     bid_equipment_form = BidEquipmentForm(request.POST)
+    #     bid_equipment_formset = BidEquipmentFormSet(
+    #         request.POST, prefix='bid_equipment')
 
-        if bid_form.is_valid() and bid_equipment_formset.is_valid():
-            bid_form.instance = bid
-            bid_form.instance.last_updated_by = request.user
-            bid_form.save()
+    #     if bid_form.is_valid() and bid_equipment_formset.is_valid():
+    #         bid_form.instance = bid
+    #         bid_form.instance.last_updated_by = request.user
+    #         bid_form.save()
 
-            for form in bid_equipment_formset:
-                bid_equipment = form.save(commit=False)
-                bid_equipment.bid = bid
-                bid_equipment.save()
-                id = bid_equipment_data.get('id', None)
-                if id:
-                    bid_equipment = BidEquipment.objects.get(pk=id)
-                    if bid_equipment_data.get('can_delete'):
-                        bid.bid_equipment.remove(bid_equipment)
-                        bid_equipment.delete()
-                        continue
-                else:
-                    bid_equipment = BidEquipment()
+    #         for form in bid_equipment_formset:
+    #             bid_equipment_data = form.cleaned_data
+    #             bid_equipment_id = bid_equipment_data.get('id')
+    #             if bid_equipment_id:
+    #                 bid_equipment = BidEquipment.objects.get(
+    #                     pk=bid_equipment_id)
+    #                 if form.cleaned_data.get('can_delete'):
+    #                     bid_equipment.delete()
+    #                     continue
+    #             else:
+    #                 bid_equipment = BidEquipment()
 
-                bid_equipment.bid = bid
-                bid_equipment.equipment = bid_equipment_data.get('equipment')
-                bid_equipment.quantity = bid_equipment_data.get('quantity')
-                bid_equipment.unit_price = bid_equipment_data.get('unit_price')
-                bid_equipment.start_date = bid_equipment_data.get('start_date')
-                bid_equipment.start_time = bid_equipment_data.get('start_time')
-                bid_equipment.end_date = bid_equipment_data.get('end_date')
-                bid_equipment.end_time = bid_equipment_data.get('end_time')
-                bid_equipment.save()
+    #             if form.is_valid() and bid_equipment_data:
+    #                 bid_equipment.equipment = bid_equipment_data['equipment']
+    #                 bid_equipment.quantity = bid_equipment_data['quantity']
+    #                 bid_equipment.unit_price = bid_equipment_data['unit_price']
+    #                 bid_equipment.start_date = bid_equipment_data['start_date']
+    #                 bid_equipment.start_time = bid_equipment_data['start_time']
+    #                 bid_equipment.end_date = bid_equipment_data['end_date']
+    #                 bid_equipment.end_time = bid_equipment_data['end_time']
+    #                 bid_equipment.save()
 
-                bid.bid_equipment.add(bid_equipment)
-            bid.save()
+    #                 bid.bid_equipment.add(bid_equipment)
 
-            return redirect('bid:bid_details_equipment', pk=bid.pk)
+    #         bid.save()
 
-        else:
-            return render(request, self.template_name, {
-                'bid': bid,
-                'bid_equipment_form': bid_equipment_formset,
-                'bid_equipment_formset': bid_equipment_formset,
-            })
+    #         return HttpResponseRedirect(reverse('bid:bid_details_equipment', args=[bid.pk]))
+
+    #     else:
+    #         context = self.get_context_data()
+    #         context['bid_form'] = bid_form
+    #         context['bid_equipment_formset'] = bid_equipment_formset
+    #         return render(request, self.template_name, context)
 
 
 class BidSummaryView(LoginRequiredMixin, TemplateView):
@@ -418,23 +411,86 @@ class BidSummaryView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
-        context['bid'] = Bid.objects.get(pk=self.kwargs['pk'])
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+        context['bid'] = bid
+        context['bid_project'] = bid.bid_project
+        bid_labor_hours = bid.bid_labor_hours.all()
+        context['bid_labor_hours'] = bid_labor_hours
+        bid_travel_hours = bid.bid_travel_hours.all()
+        context['bid_travel_hours'] = bid_travel_hours
+        bid_travel_expenses = bid.bid_travel_expenses.all()
+        context['bid_travel_expenses'] = bid_travel_expenses
+        bid_materials = bid.bid_materials.all()
+        context['bid_materials'] = bid_materials
+        bid_equiment = bid.bid_equipment.all()
+        context['bid_equipment'] = bid_equiment
 
+        labor_totals = self.get_labor_totals(bid_labor_hours)
+        context['labor_totals'] = labor_totals
+
+        travel_totals = self.get_travel_hours(bid_travel_hours)
+        context['travel_totals'] = travel_totals
+
+        expense_totals = self.get_travel_expenses(bid_travel_expenses)
+        context['expense_totals'] = expense_totals
+
+        material_totals = self.get_material_totals(bid_materials)
+        context['material_totals'] = material_totals
+
+        equiment_totals = self.get_equipment_totals(bid.bid_equipment.all())
+        context['equipment_totals'] = equiment_totals
         return context
 
-    def post(self, request, *args, **kwargs):
-        bid = Bid.objects.get(pk=self.kwargs['pk'])
-        bid_form = BidForm(request.POST, instance=bid)
+    def get_labor_totals(self, bid_labor_hours):
+        labor_total = 0
+        for labor in bid_labor_hours:
+            quantity = labor.labor_hours_quantity
+            hours = labor.labor_hours
+            rate = labor.labor_rate
+            labor_total += quantity * hours * rate.rate_amount
+        return labor_total
 
-        if bid_form.is_valid():
-            bid_form.instance = bid
-            bid_form.instance.last_updated_by = request.user
-            bid_form.save()
+    def get_travel_hours(self, bid_travel_hours):
+        travel_total = 0
+        for travel in bid_travel_hours:
+            quantity = travel.travel_hours_quantity
+            hours = travel.travel_hours
+            rate = travel.travel_rate
+            travel_total += quantity * hours * rate.rate_amount
+        return travel_total
 
-            return redirect('bid:bid_summary', pk=bid.pk)
+    def get_travel_expenses(self, bid_travel_expenses):
+        expense_total = 0
+        for expense in bid_travel_expenses:
+            quantity = expense.expense_quantity
+            amount = expense.expense_amount
+            expense_total += quantity * amount
+        return expense_total
 
-        else:
-            return render(request, self.template_name, {
-                'bid': bid,
-                'bid_form': bid_form,
-            })
+    def get_material_totals(self, bid_materials):
+        material_total = 0
+        for item in bid_materials:
+            quantity = item.quantity
+            # Get the UOM, which could be 'ea', 'ft', '100ea', '100ft', '1000ea', '1000ft'
+            uom = item.unit_of_measure
+            if any(x in uom for x in ['ea', 'ft']):
+                uom = 1
+            elif any(x in uom for x in ['100ea', '100ft']):
+                uom = 100
+            elif any(x in uom for x in ['1000ea', '1000ft']):
+                uom = 1000
+            else:
+                uom = 1
+
+            unit_price = item.unit_price
+
+            material_total += quantity * uom * unit_price
+        return material_total
+
+    def get_equipment_totals(self, bid_equipment):
+        equipment_total = 0
+        for item in bid_equipment:
+            quantity = item.quantity
+            unit_price = item.unit_price
+            equipment_total += quantity * unit_price
+        return equipment_total

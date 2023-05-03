@@ -1,1 +1,16 @@
-Work ORdre Trip Add View
+{% extends 'main/__base.html' %}
+{% block subtitle %} | Add Trip {% endblock %}
+{% load static %}
+{% block styles %}
+{% endblock %}
+{% block scripts %}
+{% endblock %}
+{% block content %}
+
+<form method="post" id="add_trip_form">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <input type="submit" value="Save" />
+</form>
+
+{% endblock %}

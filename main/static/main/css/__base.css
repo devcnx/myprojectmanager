@@ -5,6 +5,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    max-width: 100%;
+
 }
 
 html {
@@ -14,15 +16,15 @@ html {
 
 html,
 body,
-.main {
-    height: 100%;
+.main,
+.content {
+    height: fit-content;
 }
 
 /* Base Styles */
 .main,
 .content {
     width: 100%;
-    height: 100%;
     padding: 20px;
 }
 

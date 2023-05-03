@@ -1,18 +1,114 @@
 {% extends 'main/__base.html' %}
 {% block subtitle %} Bid Summary for {{ bid.bid_project.project_name }} {% endblock %}
 {% load static %}
+{% load humanize %}
 {% block styles %}
+<link rel="stylesheet" href="{% static 'bid/css/bid.css' %}">
 {% endblock %}
 {% block scripts %}
 {% endblock %}
 {% block content %}
 
-Summary for {{ bid.bid_project.project_name }} ({{ bid.bid_project.project_number }}) - {{ bid.bid_type }} Bid<br><br>
+<div class="bid_container">
 
-Site(s) : ({{ bid.bid_project.project_sites.count }})<br>
-Location(s) : {% for site in bid.bid_project.project_sites.all %} #{{ site.site_id }} {{ site.site_name }}
-{% if not forloop.last %},
-{% endif %}{% endfor %}<br>
+    <div class="bid_page_header">
+        <h2>Summary</h2>
+        <small>for {{ bid.bid_project.project_name }} ({{ bid.bid_project.project_number }}) </small>
+    </div>
+
+    <!-- Add a way for the user to navigate to different pages for the bid -->
+    <div class="bid_nav">
+        <a href="{% url 'bid:bid_details' bid.bid_id %}">Go to Labor / Travel</a>
+        <a href="{% url 'bid:bid_details_material' bid.bid_id %}">Go to Materials</a>
+        <a href="{% url 'bid:bid_details_equipment' bid.bid_id %}">Go to Equipment</a>
+    </div>
+
+    <!-- Site(s) : ({{ bid.bid_project.project_sites.count }})<br>
+    Location(s) :
+    <div class="locations_container">
+        {% for site in bid.bid_project.project_sites.all %} #{{ site.site_id }} {{ site.site_name }}
+        {% if not forloop.last %},
+        {% endif %}{% endfor %}<br>
+    </div> -->
+    <!-- {% for labor in bid_labor_hours %}
+    <p>
+        {{ labor.labor_type }}
+    </p>
+    {% endfor %} -->
+
+    <div class="totals">
+        <p>Total Labor : $ {{ labor_totals|floatformat:2|intcomma }}</p>
+        <p>Total Travel (Hours) : $ {{ travel_totals|floatformat:2|intcomma }}</p>
+        <p>Total Travel (Expenses) : $ {{ expense_totals|floatformat:2|intcomma }}</p>
+        <p>Total Materials : $ {{ material_totals|floatformat:2|intcomma }}</p>
+        <p>Total Equipment : $ {{ equipment_totals|floatformat:2|intcomma }}</p>
+    </div>
+
+    <div class="sites">
+        <h3>Sites</h3>
+        {% for site in bid.bid_project.project_sites.all %}
+        <p>
+            {{ site.site_id }} {{ site.site_name }} <br>
+            {{ site.address }}, {{ site.city }}, {{ site.state }} {{ site.zip_code }}<br>
+            {% if site.phone %}
+            ({{ site.phone|slice:":3" }}) {{ site.phone|slice:"3:6" }}-{{ site.phone|slice:"6:10" }}<br>
+            {% endif %}
+        </p>
+        {% endfor %}
+    </div>
+
+    <div class="labor">
+        <h3>Labor</h3>
+        {% for labor in bid_labor_hours %}
+        <p>
+            {{ labor.labor_type }} : {{ labor.labor_hours }} hours
+        </p>
+        {% endfor %}
+    </div>
+
+    <div class="travel">
+        <h3>Travel</h3>
+        <div class="subtravel">
+            <h4>Travel Hours</h4>
+            {% for travel in bid_travel_hours %}
+            <p>
+                {{ travel.travel_type }} : {{ travel.travel_hours }} hours
+            </p>
+            {% endfor %}
+        </div>
+        <div class="subtravel">
+            <h4>Travel Expenses</h4>
+            {% for travel in bid_travel_expenses %}
+            <p>
+                {{ travel.expense_type }} : ${{ travel.expense_quantity }} {{ travel.expense_amount }}
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="material">
+        <h3>Materials</h3>
+        {% for material in bid_materials %}
+        <p>
+            {{ material.quantity }} : {{ material.material.description }} {{ material.unit_of_measure }} @ $
+            {{ material.unit_price }}
+        </p>
+        {% endfor %}
+    </div>
+    <div class="equipment">
+        <h3>Equipment</h3>
+        {% for equipment in bid_equipment %}
+        <p>
+            {{ equipment.quantity }} : {{ equipment.equipment.description }} {{ equipment.unit_of_measure }} @ $
+            {{ equipment.unit_price }}
+        </p>
+        {% endfor %}
+    </div>
+
+
+</div>
+
+
 
 
 

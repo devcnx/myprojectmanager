@@ -14,7 +14,7 @@ def run_graybar_scraper():
 
 
 # Run the task immediately.
-# run_graybar_scraper.delay()
+run_graybar_scraper.delay()
 
 
 @shared_task
