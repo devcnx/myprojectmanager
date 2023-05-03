@@ -1,8 +1,8 @@
 <div class="overview_container">
     <div class="overview">
         <div class="overview_item">
-            <div class="overview_item_title">Recently Closed Work Orders</div>
-            {% if recently_closed_work_orders%}
+            <div class="overview_item_title">Recently Cancelled Work Orders</div>
+            {% if recently_cancelled_work_orders %}
             <div class="overview_item_value overview_header">
                 <p>Work Order</p>
                 <p>Project</p>
@@ -10,11 +10,12 @@
                 <p>Status</p>
                 <p>Last Updated</p>
             </div>
-            {% for work_order in recently_closed_work_orders %}
+            {% for work_order in recently_cancelled_work_orders %}
             <div class="overview_item_value">
                 <p>
-                    <a
-                        href="{% url 'work_orders:work_order_details' work_order.pk %}">{{ work_order.work_order_number }}</a>
+                    <a href="{% url 'work_orders:work_order_details' work_order.pk %}">
+                        {{ work_order.work_order_number }}
+                    </a>
                 </p>
                 <p>
                     {{ work_order.work_order_project.project_number}}
@@ -33,9 +34,7 @@
             {% endfor %}
             {% else %}
             <div class="overview_item_value">
-                <p>
-                    No recently closed work orders.
-                </p>
+                <p>No recently cancelled work orders</p>
             </div>
             {% endif %}
         </div>

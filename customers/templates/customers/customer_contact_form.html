@@ -1,0 +1,21 @@
+<form id="customer_contact_form" method="post">
+    {% csrf_token %}
+    <table id="customer_contact_table">
+        <tr>
+            <th colspan="10">
+                <h2>Add a New Contact</h2>
+            </th>
+        </tr>
+        <tr>
+            {% for field in form|slice:"0:3" %}
+            <td>{{ field.label_tag }}</td>
+            <td>{{ field }}</td>
+            {% if field.errors %}
+            <td>{{ field.errors }}</td>
+            {% endif %}
+            {% endfor %}
+        </tr>
+    </table>
+    <input type="submit" value="Save" />
+    <input type="button" value="Cancel" id="cancel_customer_contact_button" />
+</form>

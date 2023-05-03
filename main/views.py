@@ -32,6 +32,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['cancelled_work_orders'] = self.get_cancelled_work_orders()
         context['projects'] = Project.objects.all()
         context['recently_closed_work_orders'] = self.get_recently_closed_work_orders()
+        context['recently_cancelled_work_orders'] = self.get_recently_cancelled_work_orders()
         return context
 
     def get_open_work_orders(self):
@@ -46,6 +47,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_cancelled_work_orders(self):
         return WorkOrder.objects.filter(work_order_status='Cancelled')
+
+    def get_recently_cancelled_work_orders(self):
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        return WorkOrder.objects.filter(work_order_status='Cancelled', last_updated_on__gte=seven_days_ago)
 
     def handle_no_permission(self):
         return redirect(reverse_lazy('admin:index'))

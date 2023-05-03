@@ -2,17 +2,79 @@
 {% block subtitle %} | Add Project {% endblock %}
 {% load static %}
 {% block styles %}
+<link rel="stylesheet" href="{% static 'projects/css/projects.css' %}">
 {% endblock %}
 {% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{% static 'projects/js/projects.js' %}"></script>
+<script src="{% static 'projects/js/projects_form_handling.js' %}"></script>
 {% endblock %}
 {% block content %}
 
-Add Project<br>
+<div class="add_new_container">
+    <div id="new_contact_form_container" style="display: none;"></div>
+    <div id="new_site_form_container" style="display: none;"></div>
+</div>
 
-<form method="post" id="add_project_form">
-    {% csrf_token %}
-    {{ project_form.as_table }}
-    <input type="submit" value="Save" />
-</form>
+<div class="project_container">
+    <form method="post" id="add_project_form">
+        {% csrf_token %}
+        <table id="add_project_table">
+            <tr>
+                <th colspan="10">
+                    <h2>Add a New Project</h2>
+                </th>
+            </tr>
+            <tr>
+                {% for field in form %}
+                {% if field.name != 'project_sites' and field.name != 'project_contacts' %}
+                <td>{{ field.label_tag }}</td>
+                <td>{{ field }}</td>
+                {% if field.errors %}
+                <td>{{ field.errors }}</td>
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+
+        <div class="multiple_selections">
+            <div class="project_contacts_selections">
+                <div class="project_contacts_label">
+                    <label for="id_project_contacts">
+                        <h4>Project Contacts</h4>
+                        <small>
+                            <a href="" id="add_new_contact_link"
+                                data-url="{% url 'customers:new_customer_contact' %}">Add a New Contact</a>
+                        </small>
+                    </label>
+                    <input type="text" id="project_contacts_search" placeholder="Search Contacts">
+                </div>
+                <div class="scrollable_div">
+                    {{ form.project_contacts }}
+                </div>
+            </div>
+            <div class="project_sites_selections">
+                <div class="project_sites_label">
+                    <label for="id_project_sites">
+                        <h4>Project Sites</h4>
+                        <small>
+                            <a href="" id="add_new_site_link" data-url="{% url 'sites:add_new_site' %}">Add a New
+                                Site</a>
+                        </small>
+                    </label>
+                    <input type="text" id="project_sites_search" placeholder="Search Sites">
+                </div>
+                <div class="scrollable_div">
+                    {{ form.project_sites }}
+                </div>
+            </div>
+        </div>
+        <div class="add_project_button_container">
+            <input type="submit" value="Save" id="save_project_button" />
+        </div>
+    </form>
+
+</div>
 
 {% endblock %}

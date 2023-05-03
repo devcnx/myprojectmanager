@@ -1,9 +1,9 @@
 from customers.models import CustomerContact
-from datetime import date, datetime
 from django.apps import apps
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import m2m_changed
+from django.utils import timezone
 from notes.models import Note
 from sites.models import Site
 
@@ -50,12 +50,12 @@ class Project(models.Model):
     project_start = models.DateField(
         verbose_name='Project Start',
         db_column='project_start',
-        default=datetime.date(datetime.now()),
+        default=timezone.now,
     )
     project_end = models.DateField(
         verbose_name='Project End',
         db_column='project_end',
-        default=datetime.date(datetime.now()),
+        default=timezone.now,
     )
     project_sites = models.ManyToManyField(
         Site,
@@ -106,11 +106,3 @@ class Project(models.Model):
 
     def __str__(self):
         return f'({self.project_number}) {self.project_name}'
-
-    def save(self, user=None, *args, **kwargs):
-        if user and not self.created_by:
-            self.created_by = user
-        if user:
-            self.last_updated_by = user
-        super(Project, self).save(*args, **kwargs)
-        return user

@@ -1,0 +1,27 @@
+<div class="overview_container">
+    <div class="overview">
+        <div class="overview_item_title">Bids</div>
+        {% if bids %}
+        <div class="overview_item_value overview_header">
+            <p>Bid</p>
+            <p>Project</p>
+            <p>Site Count</p>
+            <p>Status</p>
+            <p>Due</p>
+        </div>
+        {% for bid in bids %}
+        <div class="overview_item_value">
+            <p>
+                <a href="{% url 'projects:project_details' bid.bid_project.pk %}">
+                    {{ bid }} {{ bid.bid_project.project_name }}
+                </a>
+            </p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="overview_item_value">
+            <p>No bids</p>
+        </div>
+        {% endif %}
+    </div>
+</div>

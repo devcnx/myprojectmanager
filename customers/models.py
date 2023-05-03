@@ -1,10 +1,11 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
 class Customer(models.Model):
     customer_id = models.AutoField(
         primary_key=True,
-        editable=False, 
+        editable=False,
         verbose_name='Customer ID',
         db_column='customer_id',
     )
@@ -21,7 +22,7 @@ class Customer(models.Model):
         ordering = ['customer_name']
 
     def __str__(self):
-        return self.customer_name 
+        return self.customer_name
 
 
 class CustomerContact(models.Model):
@@ -65,6 +66,36 @@ class CustomerContact(models.Model):
         max_length=150,
         verbose_name='Email',
         db_column='email',
+        blank=True,
+        null=True,
+    )
+    added_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Added By',
+        db_column='added_by',
+        related_name='contact_added_by',
+        blank=True,
+        null=True,
+    )
+    added_on = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Added On',
+        db_column='added_on',
+    )
+    last_updated_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Last Updated By',
+        db_column='last_updated_by',
+        related_name='contact_last_updated_by',
+        blank=True,
+        null=True,
+    )
+    last_updated_on = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Last Updated On',
+        db_column='last_updated_on',
     )
 
     class Meta:
@@ -75,3 +106,10 @@ class CustomerContact(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    def save(self, user=None, *args, **kwargs):
+        if not self.added_by and user:
+            self.added_by = user
+        if not self.last_updated_by and user:
+            self.last_updated_by = user
+        super(CustomerContact, self).save(*args, **kwargs)

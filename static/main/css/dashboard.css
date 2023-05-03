@@ -6,10 +6,6 @@
     text-transform: uppercase;
 }
 
-.overview {
-    /* border: 1px solid pink; */
-}
-
 .overview_item_value {
     display: flex;
     flex-direction: row;
@@ -38,11 +34,7 @@
     text-transform: uppercase;
 }
 
-.open_work_orders {
-    /* border: 1px solid red; */
+.work_orders,
+.bids {
     margin-bottom: 20px;
-}
-
-.recently_closed_work_orders {
-    /* border: 1px solid blue; */
 }

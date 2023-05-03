@@ -9,12 +9,16 @@
 {% endblock %}
 {% block content %}
 
-<div class="open_work_orders">
+<div class="work_orders">
     {% include 'main/open_work_orders.html' %}
 </div>
 
-<div class="recently_closed_work_orders">
+<div class="work_orders">
     {% include 'main/recently_closed_work_orders.html' %}
+</div>
+
+<div class="work_orders">
+    {% include 'main/recently_cancelled_work_orders.html' %}
 </div>
 
 

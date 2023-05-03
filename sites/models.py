@@ -91,6 +91,9 @@ class Site(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Added By',
         db_column='added_by',
+        related_name='site_added_by',
+        blank=True,
+        null=True,
     )
     modified_on = models.DateTimeField(
         auto_now=True,
@@ -103,6 +106,8 @@ class Site(models.Model):
         verbose_name='Modified By',
         db_column='modified_by',
         related_name='site_modified_by',
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -117,7 +122,6 @@ class Site(models.Model):
     def save(self, user=None, *args, **kwargs):
         if user and not self.added_by:
             self.added_by = user
-        if user:
+        if user and not self.modified_by:
             self.modified_by = user
         super(Site, self).save(*args, **kwargs)
-        return user
