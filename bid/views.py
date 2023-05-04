@@ -1,5 +1,5 @@
 import json
-from bid.templatetags.bid_tags import get_material_description, get_manufacturer, get_manufacturer_number, format_unit_of_measure, get_total_price
+from bid.templatetags.bid_tags import get_material_description, get_manufacturer, get_manufacturer_number, format_unit_of_measure, multiply
 from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -227,6 +227,8 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
 
         context['bid_material_unit_prices'] = bid_material_unit_prices
 
+        context['total_cost'] = self.get_total_material_cost(bid_materials)
+
         # add_material_form = MaterialForm()
         # context['add_material_form'] = add_material_form
 
@@ -234,6 +236,12 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
 
     def get_all_materials(self):
         return Material.objects.all()
+
+    def get_total_material_cost(self, bid_materials):
+        total_material_cost = 0
+        for bid_material in bid_materials:
+            total_material_cost += bid_material.quantity * bid_material.unit_price
+        return total_material_cost
 
     def get_unique_manufacturers(self):
         return Material.get_unique_manufacturers()
@@ -302,7 +310,7 @@ class BidDetailsMaterialView(LoginRequiredMixin, TemplateView):
 
             # If the BidMaterial instance already exists, update the quantity.
             if not created:
-                bid_material.quantity = quantity
+                bid_material.quantity += quantity
                 bid_material.unit_of_measure = unit_of_measure
                 bid_material.save()
 
@@ -336,73 +344,82 @@ def delete_bid_material(request, bid_id, material_id):
 
 
 class BidDetailsEquipmentView(LoginRequiredMixin, TemplateView):
-    model = Bid, BidEquipment, Equipment
+    model = Bid, Equipment, BidEquipment
     template_name = 'bid/bid_details_equipment.html'
 
     def get_context_data(self, **kwargs):
-        bid = Bid.objects.get(pk=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
         context['bid'] = bid
+        bid_equipment = bid.bid_equipment
+        context['bid_equipment'] = bid_equipment
+
         bid_equipment = bid.bid_equipment.all()
-        if bid_equipment:
-            context['bid_equipment'] = bid_equipment
-        else:
-            context['bid_equipment'] = None
-
-        bid_equipment_initial = [
-            {
+        bid_equipment_initial = []
+        for be in bid_equipment:
+            bid_equipment_initial.append({
                 'equipment': be.equipment,
-
-            } for be in bid_equipment
-        ]
+                'quantity': be.quantity,
+                'unit_price': be.unit_price,
+                'start_date': be.start_date,
+                'start_time': be.start_time,
+                'end_date': be.end_date,
+                'end_time': be.end_time,
+            })
+        context['bid_equipment_formset'] = BidEquipmentFormSet(
+            prefix='bid_equipment', initial=bid_equipment_initial)
 
         return context
 
-    # def post(self, request, *args, **kwargs):
-    #     bid = Bid.objects.get(pk=self.kwargs['pk'])
-    #     bid_form = BidForm(request.POST, instance=bid)
-    #     bid_equipment_form = BidEquipmentForm(request.POST)
-    #     bid_equipment_formset = BidEquipmentFormSet(
-    #         request.POST, prefix='bid_equipment')
+    def get_bid_equipment_data(self, bid):
 
-    #     if bid_form.is_valid() and bid_equipment_formset.is_valid():
-    #         bid_form.instance = bid
-    #         bid_form.instance.last_updated_by = request.user
-    #         bid_form.save()
+        return bid_equipment_data
 
-    #         for form in bid_equipment_formset:
-    #             bid_equipment_data = form.cleaned_data
-    #             bid_equipment_id = bid_equipment_data.get('id')
-    #             if bid_equipment_id:
-    #                 bid_equipment = BidEquipment.objects.get(
-    #                     pk=bid_equipment_id)
-    #                 if form.cleaned_data.get('can_delete'):
-    #                     bid_equipment.delete()
-    #                     continue
-    #             else:
-    #                 bid_equipment = BidEquipment()
+    def post(self, request, *args, **kwargs):
+        bid = Bid.objects.get(pk=self.kwargs['pk'])
+        bid_equipment_formset = BidEquipmentFormSet(
+            request.POST, prefix='bid_equipment')
 
-    #             if form.is_valid() and bid_equipment_data:
-    #                 bid_equipment.equipment = bid_equipment_data['equipment']
-    #                 bid_equipment.quantity = bid_equipment_data['quantity']
-    #                 bid_equipment.unit_price = bid_equipment_data['unit_price']
-    #                 bid_equipment.start_date = bid_equipment_data['start_date']
-    #                 bid_equipment.start_time = bid_equipment_data['start_time']
-    #                 bid_equipment.end_date = bid_equipment_data['end_date']
-    #                 bid_equipment.end_time = bid_equipment_data['end_time']
-    #                 bid_equipment.save()
+        if bid_equipment_formset.is_valid():
+            bid.last_updated_by = request.user
 
-    #                 bid.bid_equipment.add(bid_equipment)
+            for form in bid_equipment_formset:
+                bid_equipment_data = form.cleaned_data
+                bid_equipment_id = bid_equipment_data.get('id')
 
-    #         bid.save()
+                if bid_equipment_id:
+                    bid_equipment = BidEquipment.objects.get(
+                        pk=bid_equipment_id)
+                    if form.cleaned_data.get('can_delete'):
+                        bid.bid_equipment.remove(bid_equipment)
+                        bid_equipment.delete()
+                        continue
+                else:
+                    bid_equipment = BidEquipment()
 
-    #         return HttpResponseRedirect(reverse('bid:bid_details_equipment', args=[bid.pk]))
+                if form.is_valid() and bid_equipment_data:
+                    bid_equipment.equipment = bid_equipment_data['equipment']
+                    bid_equipment.quantity = bid_equipment_data['quantity']
+                    bid_equipment.unit_price = bid_equipment_data['unit_price']
+                    bid_equipment.start_date = bid_equipment_data['start_date']
+                    bid_equipment.start_time = bid_equipment_data['start_time']
+                    bid_equipment.end_date = bid_equipment_data['end_date']
+                    bid_equipment.end_time = bid_equipment_data['end_time']
+                    can_delete = bid_equipment_data.get('can_delete')
+                    if can_delete:
+                        bid_equipment.delete()
+                    bid_equipment.save()
+                    bid.bid_equipment.add(bid_equipment)
 
-    #     else:
-    #         context = self.get_context_data()
-    #         context['bid_form'] = bid_form
-    #         context['bid_equipment_formset'] = bid_equipment_formset
-    #         return render(request, self.template_name, context)
+            bid.save()
+
+            return HttpResponseRedirect(reverse('bid:bid_details_equipment', args=[bid.pk]))
+
+        else:
+            context = self.get_context_data()
+            context['bid'] = bid
+            context['bid_equipment_formset'] = bid_equipment_formset
+            return render(request, self.template_name, context)
 
 
 class BidSummaryView(LoginRequiredMixin, TemplateView):

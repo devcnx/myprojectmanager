@@ -9,7 +9,7 @@
 {% endblock %}
 {% block content %}
 
-<div class="bid_container">
+<div class="bid_container bid_summary">
 
     <div class="bid_page_header">
         <h2>Summary</h2>
@@ -23,31 +23,25 @@
         <a href="{% url 'bid:bid_details_equipment' bid.bid_id %}">Go to Equipment</a>
     </div>
 
-    <!-- Site(s) : ({{ bid.bid_project.project_sites.count }})<br>
-    Location(s) :
-    <div class="locations_container">
-        {% for site in bid.bid_project.project_sites.all %} #{{ site.site_id }} {{ site.site_name }}
-        {% if not forloop.last %},
-        {% endif %}{% endfor %}<br>
-    </div> -->
-    <!-- {% for labor in bid_labor_hours %}
-    <p>
-        {{ labor.labor_type }}
-    </p>
-    {% endfor %} -->
 
-    <div class="totals">
-        <p>Total Labor : $ {{ labor_totals|floatformat:2|intcomma }}</p>
-        <p>Total Travel (Hours) : $ {{ travel_totals|floatformat:2|intcomma }}</p>
-        <p>Total Travel (Expenses) : $ {{ expense_totals|floatformat:2|intcomma }}</p>
-        <p>Total Materials : $ {{ material_totals|floatformat:2|intcomma }}</p>
-        <p>Total Equipment : $ {{ equipment_totals|floatformat:2|intcomma }}</p>
+    <div class="bid_totals">
+        <p><strong>Total Labor</strong> : $ {{ labor_totals|floatformat:2|intcomma }}</p>
+        <p><strong>Total Travel (Hours)</strong> : $ {{ travel_totals|floatformat:2|intcomma }}</p>
+        <p><strong>Total Travel (Expenses)</strong> : $ {{ expense_totals|floatformat:2|intcomma }}</p>
+        <p><strong>Total Materials</strong> : $ {{ material_totals|floatformat:2|intcomma }}</p>
+        <p><strong>Total Equipment</strong> : $ {{ equipment_totals|floatformat:2|intcomma }}</p>
+    </div>
+    <div class="grand_total">
+        <p>
+            <strong>Grand Total</strong> : $
+            {{ labor_totals|add:travel_totals|add:expense_totals|add:material_totals|add:equipment_totals|floatformat:2|intcomma }}
+        </p>
     </div>
 
     <div class="sites">
         <h3>Sites</h3>
         {% for site in bid.bid_project.project_sites.all %}
-        <p>
+        <p class="site_details">
             {{ site.site_id }} {{ site.site_name }} <br>
             {{ site.address }}, {{ site.city }}, {{ site.state }} {{ site.zip_code }}<br>
             {% if site.phone %}
@@ -61,7 +55,8 @@
         <h3>Labor</h3>
         {% for labor in bid_labor_hours %}
         <p>
-            {{ labor.labor_type }} : {{ labor.labor_hours }} hours
+            ({{ labor.labor_hours|floatformat:0 }}) Hours of {{ labor.labor_type }} at ${{ labor.labor_rate }} for
+            ({{ labor.labor_hours_quantity|floatformat:0}}) Day(s)
         </p>
         {% endfor %}
     </div>
@@ -72,15 +67,16 @@
             <h4>Travel Hours</h4>
             {% for travel in bid_travel_hours %}
             <p>
-                {{ travel.travel_type }} : {{ travel.travel_hours }} hours
-            </p>
-            {% endfor %}
+                ({{ travel.travel_hours|floatformat:0 }}) Hours of Travel from {{ travel.travel_type }} at
+                $ {{ travel.travel_rate }} for ({{ travel.travel_hours_quantity|floatformat:0}}) Day(s)
+                {% endfor %}
         </div>
         <div class="subtravel">
             <h4>Travel Expenses</h4>
             {% for travel in bid_travel_expenses %}
             <p>
-                {{ travel.expense_type }} : ${{ travel.expense_quantity }} {{ travel.expense_amount }}
+                ({{ travel.expense_quantity|floatformat:0 }}) Qty. {{ travel.expense_type }} at $
+                {{ travel.expense_amount }}
             </p>
             {% endfor %}
         </div>
@@ -90,8 +86,7 @@
         <h3>Materials</h3>
         {% for material in bid_materials %}
         <p>
-            {{ material.quantity }} : {{ material.material.description }} {{ material.unit_of_measure }} @ $
-            {{ material.unit_price }}
+            ({{ material.quantity|floatformat:0 }}) {{ material.material.description }} at $ {{ material.unit_price }}
         </p>
         {% endfor %}
     </div>
@@ -99,8 +94,13 @@
         <h3>Equipment</h3>
         {% for equipment in bid_equipment %}
         <p>
-            {{ equipment.quantity }} : {{ equipment.equipment.description }} {{ equipment.unit_of_measure }} @ $
-            {{ equipment.unit_price }}
+            ({{ equipment.quantity|floatformat:0 }}) {{ equipment.equipment.description }} at $
+            {{ equipment.unit_price }}<br>
+            <small
+                style="margin-left: 10px; color: #666; font-size: 0.8rem; font-weight: bold; background-color: #feffca;">
+                From {{ equipment.start_date|date:"m/d/Y" }} at {{ equipment.start_time }} to
+                {{ equipment.end_date|date:"m/d/Y" }} at {{ equipment.end_time }}
+            </small>
         </p>
         {% endfor %}
     </div>

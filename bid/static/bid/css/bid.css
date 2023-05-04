@@ -15,6 +15,7 @@
     align-items: center;
     padding: 10px;
     padding-bottom: 10px;
+    text-transform: uppercase;
 }
 
 .bid_page_header h2 {
@@ -118,6 +119,7 @@
     border: none;
     border-bottom: 1px solid #ccc;
     text-align: center;
+    text-transform: uppercase;
 }
 
 
@@ -184,7 +186,6 @@ select[name='bid_project'] {
     /* Disable the ability to change the project name */
     pointer-events: none;
     background-color: #f5f5f5;
-
 }
 
 
@@ -282,7 +283,6 @@ select[name='bid_project'] {
 
 /* Newly Added Bid Materials */
 .bid_material_item {
-    border: 1px solid orange;
     width: 50%;
     margin: 10px 0;
 }
@@ -296,6 +296,10 @@ select[name='bid_project'] {
     align-items: center;
     padding: 5px;
     text-transform: uppercase;
+}
+
+button.remove_bid_material_button {
+    border: none;
 }
 
 .bid_material_item_second_line {
@@ -322,8 +326,9 @@ select[name='bid_project'] {
 
 /* Existing Bid Materials  */
 .existing_bid_materials {
-    border: 1px solid aqua;
     width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
 }
 
 #bid_materials_summary_table {
@@ -337,4 +342,173 @@ select[name='bid_project'] {
     background-color: #081d65;
     color: #fff;
     padding: 10px;
+}
+
+.total {
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    border-top: 1px solid #ccc;
+}
+
+/* Bid Equipment Page */
+
+.bid_equipment-form,
+.dynamic_equipment_form {
+    border: 1px solid #ccc;
+    width: 100%;
+    margin: 5px auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 5px #ccc;
+}
+
+#bid_equipment_form {
+    width: 100%;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+#bid_equipment_form h3 {
+    text-transform: uppercase;
+    padding: 5px;
+}
+
+#bid_equipment_form label {
+    width: 200px;
+    display: inline-block;
+    padding: 5px;
+    margin-right: 10px;
+    text-transform: uppercase;
+}
+
+#bid_equipment_form select,
+#bid_equipment_form input,
+#bid_equipment_form input[type='number'],
+#bid_equipment_form input[type='text'],
+#bid_equipment_form input[type='date'],
+#bid_equipment_form input[type='time'] {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Roboto Condensed', sans-serif;
+    width: 225px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+
+.bid_equipment-form_field {
+    width: 200px;
+}
+
+.dynamic_equipment_form select,
+.dynamic_equipment_form input,
+.dynamic_equipment_form input[type='number'],
+.dynamic_equipment_form input[type='text'],
+.dynamic_equipment_form input[type='date'],
+.dynamic_equipment_form input[type='time'] {
+    border: none;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Roboto Condensed', sans-serif;
+    width: 200px;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.bid_totals {
+    width: 100%;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
+
+.grand_total {
+    width: 20%;
+    text-align: center;
+    font-size: 18px;
+    padding: 10px;
+    margin: 10px auto;
+    background-color: #f5f5f5;
+}
+
+.bid_totals,
+.grand_total p {
+    text-transform: uppercase;
+}
+
+.sites h3,
+.labor h3,
+.travel h3,
+.travel h4,
+.equipment h3,
+.materials h3 {
+    text-transform: uppercase;
+}
+
+.travel h4 {
+    margin-top: 10px;
+}
+
+.sites {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+}
+
+.labor {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+}
+
+.travel {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+}
+
+.material {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+}
+
+.equipment {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 5px;
+}
+
+.bid_summary {
+    text-transform: uppercase;
 }

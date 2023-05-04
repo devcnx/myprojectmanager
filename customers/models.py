@@ -1,8 +1,19 @@
+""" 
+Customer Models 
+
+Models :
+    Customer - the customer
+    CustomerContact - individual contacts for a given customer
+"""
+
 from django.contrib.auth.models import User
 from django.db import models
 
 
 class Customer(models.Model):
+    """ 
+    Represents a customer (as in a company).
+    """
     customer_id = models.AutoField(
         primary_key=True,
         editable=False,
@@ -26,6 +37,9 @@ class Customer(models.Model):
 
 
 class CustomerContact(models.Model):
+    """ 
+    Represents a contact for a given customer.
+    """
     customer_contact_id = models.AutoField(
         primary_key=True,
         editable=False,
@@ -108,6 +122,9 @@ class CustomerContact(models.Model):
         return f'{self.first_name} {self.last_name}'
 
     def save(self, user=None, *args, **kwargs):
+        """ 
+        Override the save method to add the user to the added_by and last_updated_by fields if they are not already set.
+        """
         if not self.added_by and user:
             self.added_by = user
         if not self.last_updated_by and user:

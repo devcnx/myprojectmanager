@@ -1,10 +1,11 @@
 <div class="overview_container">
     <div class="overview">
-        <div class="overview_item_title">Bids</div>
+        <div class="overview_item_title">All Opportunities</div>
         {% if bids %}
         <div class="overview_item_value overview_header">
-            <p>Bid</p>
             <p>Project</p>
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
             <p>Site Count</p>
             <p>Status</p>
             <p>Due</p>
@@ -12,15 +13,33 @@
         {% for bid in bids %}
         <div class="overview_item_value">
             <p>
-                <a href="{% url 'projects:project_details' bid.bid_project.pk %}">
-                    {{ bid }} {{ bid.bid_project.project_name }}
+                {{ bid.bid_project.project_name }}
+            </p>
+            <p>
+                <a href="{% url 'bid:bid_details' bid.pk %}">
+                    View Bid
                 </a>
             </p>
+            <p>
+                <a href="{% url 'projects:project_details' bid.bid_project.pk %}">
+                    View Project
+                </a>
+            </p>
+            <p>{{ bid.bid_project.project_sites.count }}</p>
+            <p>
+                {{ bid.bid_status }}
+            </p>
+            {% if bid.bid_due_date %}
+            <p>{{ bid.bid_due_date }}</p>
+            {% else %}
+            <p>Pending Due Date</p>
+            {% endif %}
+
         </div>
         {% endfor %}
         {% else %}
         <div class="overview_item_value">
-            <p>No bids</p>
+            <p>No project bids to display.</p>
         </div>
         {% endif %}
     </div>

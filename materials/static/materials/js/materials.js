@@ -96,8 +96,6 @@ $(document).ready(function () {
                         selectedUOM = { value: graybarUOM, text: uomRegex.exec($(vendorPrices[0]).text())[1] };
                     }
 
-
-                    // const isGraybarLowest = graybarPerUnitPrice === lowestPrice;
                     const isGraybarLowest = graybarPrice === lowestPrice;
 
                     selectedUOM = isGraybarLowest ? graybarUOM : anixterUOM;
@@ -105,7 +103,6 @@ $(document).ready(function () {
                 } else if (vendorPrices.length === 1) {
                     const priceRegex = /(\d+(\.\d{1,2})?)/;
                     const uomRegex = /\(([^)]+)\)/;
-                    // lowestPrice = parseFloat(priceRegex.exec($(vendorPrices[0]).text())[0]);
                     selectedUOM = uomRegex.exec($(vendorPrices[0]).text())[1];
                 }
 
@@ -123,7 +120,6 @@ $(document).ready(function () {
                 const secondLine = $('<div>').addClass('bid_material_item_second_line');
                 const quantityLabel = $('<label>').text(`QTY `);
                 const unitOfMeasureLabel = $('<label>').text(`Unit of Measure`);
-
                 const unitPriceLabel = $('<label>').text(`Unit Price`);
                 secondLine.append(quantityLabel, unitOfMeasureLabel, unitPriceLabel);
 

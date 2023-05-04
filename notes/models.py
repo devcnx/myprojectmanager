@@ -1,8 +1,17 @@
+""" 
+Notes App Models. 
+"""
+
 from django.contrib.auth.models import User 
 from django.db import models
 
 
 class Note(models.Model):
+    """ 
+    Model for the notes app. 
+    
+    To be used with other apps to allow users to add notes to work orders, projects, bids, etc.
+    """
     note_id = models.AutoField(
         primary_key=True,
         editable=False,
@@ -35,6 +44,9 @@ class Note(models.Model):
         return self.note 
     
     def save(self, *args, **kwargs):
+        """ 
+        Override the save method to add a note_id if one doesn't exist, and to increment the note_id if one does exist.
+        """
         if not self.note_id:
             note_count = Note.objects.count()
             if note_count == 0:

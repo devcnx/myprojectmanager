@@ -1,21 +1,25 @@
 <form id="new_site_form" method="post">
     {% csrf_token %}
-    <table id="new_site_table">
-        <tr>
-            <th colspan="10">
-                <h2>Add a New Site</h2>
-            </th>
-        </tr>
-        <tr>
-            {% for field in site_form %}
-            <td>{{ field.label_tag }}</td>
-            <td>{{ field }}</td>
-            {% if field.errors %}
-            <td>{{ field.errors }}</td>
-            {% endif %}
-            {% endfor %}
-        </tr>
-    </table>
-    <input type="submit" value="Save" />
-    <input type="button" value="Cancel" id="cancel_new_site_button" />
+    <small>
+        Enter the site details below.
+    </small>
+    <div class="site_entry">
+        {% for field in site_form %}
+        <div class="site_label">
+            <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+        </div>
+        <div class="site_input">
+            {{ field }}
+        </div>
+        {% if field.errors %}
+        <div class="site_error">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="site_form_buttons">
+        <input type="submit" value="Save" />
+        <button type="button" value="Cancel" id="cancel_new_site_button">Cancel</button>
+    </div>
 </form>

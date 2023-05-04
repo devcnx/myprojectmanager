@@ -36,6 +36,7 @@ const addForm = (button, prefix, className) => {
 
 
 const removeLastForm = (prefix, className) => {
+    console.log(`remove form ${prefix} ${className}`);
     const formIndex = parseInt($(`#${prefix}-TOTAL_FORMS`).value);
     if (formIndex === 0) {
         return;
@@ -124,5 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     };
-    init();
+
+    window.addEventListener('load', init);
 });

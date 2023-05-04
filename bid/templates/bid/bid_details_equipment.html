@@ -24,7 +24,7 @@
     </div>
 
     <div class="bid_form_container">
-        <form method="post">
+        <form method="post" id="bid_equipment_form">
             {% csrf_token %}
 
             <h3>Eqiuipment Rentals</h3>
@@ -36,15 +36,28 @@
                 value="{{ bid_equipment_formset.total_form_count }}" />
             <input type="hidden" name="bid_equipment-INITIAL_FORMS" id="bid_equipment-INITIAL_FORMS"
                 value="{{ bid_equipment_formset.initial_form_count }}" />
+
             {% for equipment_form in bid_equipment_formset %}
             <div class="bid_equipment-form">
-                {{ equipment_form.as_table }}
+                <!-- {{ equipment_form.as_table }} -->
+                {% for field in equipment_form %}
+                <div class="bid_equipment-form_field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="help_text">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% if field.errors %}
+                    <p class="error">{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
             </div>
             {% endfor %}
 
             <div class="bid_button_container">
-                <button type="button" id="add_equipment">Add Equipment Entry</button>
-                <button type="button" id="remove_equipment">Remove Last Equipment Entry</button>
+                <button type="button" id="add_equipment">Add Equipment</button>
+                <button type="button" id="remove_equipment">Remove Equipment</button>
             </div>
 
             <div class="bid_button_container">

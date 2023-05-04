@@ -41,6 +41,12 @@ some_temp_folder/
 # Ignore the scraper_constants.py file 
 scraper_constants.py
 
+# Ignore the .git folder
+.git/
+
+# Ignore the .vscode folder
+.vscode/
+
 gis/
 vendor/select2/
 i18n/

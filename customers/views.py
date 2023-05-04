@@ -1,3 +1,7 @@
+""" 
+Views for the Customer App
+"""
+
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.template.loader import render_to_string
@@ -7,6 +11,9 @@ from .models import CustomerContact
 
 @login_required
 def new_customer_contact(request):
+    """ 
+    View for handling the creation of a new customer contact.
+    """
     if request.method == 'POST':
         form = CustomerContactForm(request.POST)
         if form.is_valid():

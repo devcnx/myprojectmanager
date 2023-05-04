@@ -1,21 +1,26 @@
 <form id="customer_contact_form" method="post">
     {% csrf_token %}
-    <table id="customer_contact_table">
-        <tr>
-            <th colspan="10">
-                <h2>Add a New Contact</h2>
-            </th>
-        </tr>
-        <tr>
-            {% for field in form|slice:"0:3" %}
-            <td>{{ field.label_tag }}</td>
-            <td>{{ field }}</td>
-            {% if field.errors %}
-            <td>{{ field.errors }}</td>
-            {% endif %}
-            {% endfor %}
-        </tr>
-    </table>
-    <input type="submit" value="Save" />
-    <input type="button" value="Cancel" id="cancel_customer_contact_button" />
+    <small>
+        Enter the customer contact details below.
+    </small>
+    <div class="customer_contact_entry">
+
+        {% for field in form %}
+        <div class="customer_contact_label">
+            <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+        </div>
+        <div class="customer_contact_input">
+            {{ field }}
+        </div>
+        {% if field.errors %}
+        <div class="customer_contact_error">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="customer_form_buttons">
+        <input type="submit" value="Save" />
+        <button type="button" value="Cancel" id="cancel_customer_contact_button">Cancel</button>
+    </div>
 </form>

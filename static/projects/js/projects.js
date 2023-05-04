@@ -1,21 +1,22 @@
 $(document).ready(function () {
     $('#project_contacts_search').on('keyup', function () {
         let searchValue = $(this).val().toLowerCase();
-        $('#id_project_contacts div').filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(searchValue) > -1);
+        $('#id_project_contacts div').each(function () {
+            if ($(this).text().toLowerCase().indexOf(searchValue) > -1) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
         });
     });
 
     $('#project_sites_search').on('keyup', function () {
         let searchValue = $(this).val().toLowerCase();
-        $('#id_project_sites div').filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(searchValue) > -1);
-
-            // If there are no matches, show the "Add Site" button
-            if ($('#id_project_sites div:visible').length === 0) {
-                $('#id_project_sites_add').show();
+        $('#id_project_sites div').each(function () {
+            if ($(this).text().toLowerCase().indexOf(searchValue) > -1) {
+                $(this).show();
             } else {
-                $('#id_project_sites_add').hide();
+                $(this).hide();
             }
         });
     });

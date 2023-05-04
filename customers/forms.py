@@ -1,11 +1,16 @@
 from django import forms
-from django.contrib.auth.models import User
-from django.utils import timezone
-from .models import Customer, CustomerContact
+""" 
+Customers App Forms
+
+Forms :
+    CustomerContactForm - Form for adding/editing customer contacts.
+"""
+
+from .models import CustomerContact
 
 
 class CustomerContactForm(forms.ModelForm):
     class Meta:
         model = CustomerContact
         fields = '__all__'
-        # exclude = ('added_by', 'last_updated_by')
+        exclude = ('added_by', 'last_updated_by')

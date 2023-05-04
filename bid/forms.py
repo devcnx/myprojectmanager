@@ -1,7 +1,8 @@
 import datetime
 from django import forms
-from django.forms import formset_factory
-from django.forms import ModelForm
+from django.forms import formset_factory, modelformset_factory, ModelForm
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from equipment.models import Equipment
 from labor.models import LaborHours
 from rates.models import Rate
@@ -44,7 +45,7 @@ class BidLaborHoursForm(forms.Form):
         required=False, initial=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(BidLaborHoursForm, self).__init__(*args, **kwargs)
         if self.initial.get('labor_id'):
             self.fields['can_delete'].widget = forms.CheckboxInput()
             self.fields['can_delete'].label = 'Delete'
@@ -107,39 +108,9 @@ class BidMaterialForm(forms.ModelForm):
         fields = '__all__'
 
 
-# class BidEquipmentForm(forms.ModelForm):
-#     can_delete = forms.BooleanField(
-#         required=False, initial=False, widget=forms.HiddenInput())
-
-#     class Meta:
-#         model = BidEquipment
-#         fields = ['equipment', 'quantity', 'unit_price',
-#                   'start_date', 'start_time', 'end_date', 'end_time']
-#         widgets = {
-#             'start_date': forms.DateInput(attrs={'type': 'date', 'value': datetime.date.today()}),
-#             'start_time': forms.TimeInput(attrs={'type': 'time', 'value': datetime.datetime.now().strftime('%H:%M')}),
-#             'end_date': forms.DateInput(attrs={'type': 'date', 'value': datetime.date.today()}),
-#             'end_time': forms.TimeInput(attrs={'type': 'time', 'value': datetime.datetime.now().strftime('%H:%M')}),
-#         }
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         if self.initial.get('id'):
-#             self.fields['can_delete'].widget = forms.CheckboxInput()
-#             self.fields['can_delete'].label = 'Delete'
-
-
-# BidEquipmentFormSet = forms.modelformset_factory(
-#     BidEquipment, form=BidEquipmentForm, extra=0, min_num=1, can_delete=True
-# )
-
-
 class BidEquipmentForm(forms.Form):
-    id = forms.IntegerField(
-        required=False, widget=forms.HiddenInput())
-    equipment = BidEquipment.equipment.field.formfield(
-        widget=forms.Select(attrs={'class': 'form-control'}))
-
+    equipment = forms.ModelChoiceField(
+        queryset=Equipment.objects.all(), empty_label=None)
     quantity = forms.DecimalField(
         max_digits=10, decimal_places=2, initial=1.00)
     unit_price = forms.DecimalField(
@@ -168,15 +139,62 @@ class BidEquipmentForm(forms.Form):
             'value': datetime.datetime.now().strftime('%H:%M'),
         })
     )
-    can_delete = forms.BooleanField(
-        required=False, initial=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.initial.get('id'):
+        if self.initial.get('bid_id'):
             self.fields['can_delete'].widget = forms.CheckboxInput()
             self.fields['can_delete'].label = 'Delete'
+            self.fields['can_delete'].attrs
 
 
 BidEquipmentFormSet = formset_factory(
-    BidEquipmentForm, extra=0, formset=forms.BaseFormSet, min_num=1)
+    BidEquipmentForm, extra=0, formset=forms.BaseFormSet, min_num=0, can_delete=True)
+
+
+# class BidEquipmentForm(forms.ModelForm):
+#     class Meta:
+#         model = BidEquipment
+#         fields = '__all__'
+#         widgets = {
+#             'start_date': forms.DateInput(attrs={'type': 'date', 'value': timezone.now().strftime('%m/%d/%Y')}),
+#             'start_time': forms.TimeInput(attrs={'type': 'time', 'value': timezone.now().strftime('%H:%M')}),
+#             'end_date': forms.DateInput(attrs={'type': 'date', 'value': timezone.now().strftime('%m/%d/%Y')}),
+#             'end_time': forms.TimeInput(attrs={'type': 'time', 'value': timezone.now().strftime('%H:%M')}),
+#         }
+
+#         labels = {
+#             'equipment': 'Equipment',
+#             'start_date': 'Start Date',
+#             'start_time': 'Start Time',
+#             'end_date': 'End Date',
+#             'end_time': 'End Time',
+#             'quantity': 'Quantity',
+#             'unit_price': 'Unit Price',
+#         }
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         if self.initial.get('id'):
+#             self.fields['can_delete'].widget = forms.CheckboxInput()
+#             self.fields['can_delete'].label = 'Delete'
+
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         start_date = cleaned_data.get("start_date")
+#         start_time = cleaned_data.get("start_time")
+#         end_date = cleaned_data.get("end_date")
+#         end_time = cleaned_data.get("end_time")
+#         if start_date and end_date:
+#             if start_date > end_date:
+#                 raise forms.ValidationError(
+#                     "End date should be greater than start date.")
+#             elif start_date == end_date:
+#                 if start_time > end_time:
+#                     raise forms.ValidationError(
+#                         "End time should be greater than start time.")
+#         return cleaned_data
+
+
+# BidEquipmentFormSet = formset_factory(
+#     BidEquipmentForm, extra=0, formset=forms.BaseFormSet, min_num=0, can_delete=True)

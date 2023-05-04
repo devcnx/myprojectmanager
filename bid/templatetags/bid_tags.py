@@ -39,18 +39,8 @@ def format_unit_of_measure(unit_of_measure):
 
 
 @register.filter
-def get_total_price(bid_material):
-    quantity = bid_material['quantity']
-    unit_of_measure = bid_material['unit_of_measure']
-    unit_price = bid_material['unit_price']
-    if unit_of_measure == "1":
-        return "$ {:.2f}".format(quantity * unit_price)
-    elif unit_of_measure == "100":
-        return "$ {:.2f} (100{})".format((quantity * unit_price) / 100, bid_material['unit_display'])
-    elif unit_of_measure == "1000":
-        return "$ {:.2f} (1000{})".format((quantity * unit_price) / 1000, bid_material['unit_display'])
-    else:
-        return "N/A"
+def multiply(value, arg):
+    return value * arg
 
 
 @register.filter

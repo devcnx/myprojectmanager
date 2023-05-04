@@ -34,16 +34,6 @@ class ProjectForm(forms.ModelForm):
             self.fields['project_start'].initial = timezone.now().date()
             self.fields['project_end'].initial = timezone.now().date()
 
-    def clean(self):
-        cleaned_data = super().clean()
-        project_start = cleaned_data.get('project_start')
-        project_end = cleaned_data.get('project_end')
-
-        if project_start > project_end:
-            raise forms.ValidationError(
-                "Project Start Date must be before Project End Date")
-        return cleaned_data
-
     def save(self, commit=True):
         project = super().save(commit=False)
         project.created_by = self.request.user
@@ -54,6 +44,8 @@ class ProjectForm(forms.ModelForm):
 
     def save_m2m(self):
         project = super().save(commit=False)
-        project.save()
-        self.save_m2m()
+        project.project_contacts.set(self.cleaned_data['project_contacts'])
+        project.project_sites.set(self.cleaned_data['project_sites'])
+        if commit:
+            project.save()
         return project

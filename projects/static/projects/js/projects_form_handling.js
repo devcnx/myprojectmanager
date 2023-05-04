@@ -7,12 +7,27 @@ $(document).ready(function () {
                 $('#new_contact_form_container').html(data.form_html);
                 $('#new_contact_form_container').show();
                 // Change the style of the link to indicate that the form is open
-                $('#add_new_contact_link').addClass('active');
+                $('#add_new_contact_link').addClass('link_active');
+                $('#id_customer').val(1);
             } else {
                 alert(`Error Loading the Form: ${data.error_message}`);
             }
 
         });
+    });
+
+    $('#new_site_form_container').on('click', '#cancel_new_site_button', function (event) {
+        event.preventDefault();
+        $('#new_site_form_container').empty();
+        $('#new_site_form_container').hide();
+        $('#add_new_site_link').removeClass('link_active');
+    });
+
+    $('#new_contact_form_container').on('click', '#cancel_customer_contact_button', function (event) {
+        event.preventDefault();
+        $('#new_contact_form_container').empty();
+        $('#new_contact_form_container').hide();
+        $('#add_new_contact_link').removeClass('link_active');
     });
 
     $('#add_new_site_link').click(function (event) {
@@ -25,7 +40,7 @@ $(document).ready(function () {
                 $('#new_site_form_container').html(data.form_html);
                 $('#new_site_form_container').show();
                 // Change the style of the link to indicate that the form is open
-                $('#add_new_site_link').addClass('active');
+                $('#add_new_site_link').addClass('link_active');
             } else {
                 alert(`Error Loading the Form: ${data.error_message}`);
             }
@@ -47,7 +62,7 @@ $(document).ready(function () {
                 $('#new_contact_form_container').hide();
 
                 // Change the style of the link to indicate that the form is closed
-                $('#add_new_contact_link').removeClass('active');
+                $('#add_new_contact_link').removeClass('link_active');
 
                 // Show the new contact in the project_contacts selection
                 $('#id_project_contacts').show();
@@ -76,7 +91,7 @@ $(document).ready(function () {
                 $('#new_site_form_container').hide();
 
                 // Change the style of the link to indicate that the form is closed
-                $('#add_new_site_link').removeClass('active');
+                $('#add_new_site_link').removeClass('link_active');
 
                 // Show the new site in the project_sites selection
                 $('#id_project_sites').show();
